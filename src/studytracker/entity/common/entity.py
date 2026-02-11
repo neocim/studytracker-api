@@ -5,7 +5,7 @@ EntityID = TypeVar("EntityID")
 
 
 class Entity[EntityID: Hashable]:
-    def __init__(self, entity_id) -> None:
+    def __init__(self, entity_id: EntityID) -> None:
         self._entity_id = entity_id
 
     @property
