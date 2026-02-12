@@ -13,8 +13,8 @@ retort = Retort()
 
 @dataclass(slots=True, kw_only=True)
 class Config:
-    database_config: DatabaseConfig
-    api_config: ApiConfig
+    database: DatabaseConfig
+    api: ApiConfig
 
 
 def get_config_path() -> Path:
