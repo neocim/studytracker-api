@@ -5,14 +5,16 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
-from studytracker.bootstrap.main.config import get_config_path, load_config
+
+from studytracker.bootstrap.config import get_config_path, load_config
+from studytracker.infrastructure.database.models.base import mapper_registry
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = None
+target_metadata = mapper_registry.metadata
 
 
 def get_url() -> str:
