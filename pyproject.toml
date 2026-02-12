@@ -5,16 +5,20 @@ build-backend = "uv_build"
 [project]
 name = "studytracker"
 version = "0.1.0"
-description = "Add your description here"
+description = "The rewritten version of https://github.com/neocim/StudyTrackerApi"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "adaptix>=3.0.0b11",
+    "alembic>=1.18.4",
+    "dishka>=1.8.0",
+    "fastapi>=0.128.8",
+    "sqlalchemy>=2.0.46",
+]
 
 [project.optional-dependencies]
-lint = [
-    "mypy>=1.19.1",
-    "ruff>=0.15.0",
-]
+lint = ["mypy>=1.19.1", "ruff>=0.15.0"]
+dev = ['studytracker[lint]']
 
 [tool.mypy]
 ignore_missing_imports = true
