@@ -1,6 +1,6 @@
 from sqlalchemy import UUID, Boolean, Column, Date, ForeignKey, String, Table
 
-from studytracker.entities.goal import Goal
+from studytracker.domain.entities.goal import Goal
 from studytracker.infrastructure.database.models.base import MAPPER_REGISTRY
 
 GOALS_TABLE = Table(

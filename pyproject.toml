@@ -11,6 +11,7 @@ requires-python = ">=3.13"
 dependencies = [
     "adaptix>=3.0.0b11",
     "alembic>=1.18.4",
+    "bazario>=0.4.2",
     "dishka>=1.8.0",
     "fastapi>=0.128.8",
     "sqlalchemy[postgresql-asyncpg]>=2.0.46",

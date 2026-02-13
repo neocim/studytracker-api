@@ -1,7 +1,7 @@
 from datetime import date
 from uuid import UUID
 
-from studytracker.entities.common.entity import Entity
+from studytracker.domain.entities.common.entity import Entity
 
 
 class Goal(Entity[UUID]):
