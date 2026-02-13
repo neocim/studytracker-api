@@ -1,18 +1,18 @@
 from datetime import date
 from uuid import UUID
 
-from studytracker.domain.entities.common.entity import Entity
+from studytracker.domain.entity.common.entity import Entity
 
 
 class Goal(Entity[UUID]):
     def __init__(
         self,
         entity_id: UUID,
-        parent_id: UUID,
         user_id: UUID,
         period_start: date,
         period_end: date,
         name: str,
+        parent_id: UUID | None = None,
         description: str | None = None,
         is_success: bool | None = None,
     ) -> None:

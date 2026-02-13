@@ -5,7 +5,7 @@ from uuid import UUID
 from bazario import Request
 from bazario.asyncio import RequestHandler
 
-from studytracker.application.ports.id_generator import IDGenerator
+from studytracker.application.port.id_generator import IDGenerator
 from studytracker.domain.repository.goal_repository import GoalRepository
 
 
@@ -16,6 +16,7 @@ class CreateGoalRequest(Request[None]):
     period_start: date
     period_end: date
     name: str
+    parent_id: UUID | None = None
     description: str | None = None
     is_success: bool | None = None
 
