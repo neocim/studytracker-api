@@ -29,7 +29,7 @@ services:
         max-size: "50m"
     restart: "unless-stopped"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      test: [ "CMD-SHELL", "pg_isready -d studytracker_db -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
