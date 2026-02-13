@@ -22,3 +22,6 @@ class CreateGoalRequest(Request[None]):
 class CreateGoalRequestHandler(RequestHandler[CreateGoalRequest, None]):
     def __init__(self, id_generator: IDGenerator, goal_repository: GoalRepository) -> None:
         
+
+    async def handle(self, request: CreateGoalRequest) -> None:
+        
