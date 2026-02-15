@@ -10,7 +10,6 @@ from studytracker.application.error.goal import InvalidPeriodRange, ParentGoalNo
 from studytracker.application.port.data_context import DataContext
 from studytracker.application.query.gateway.goal import GoalGateway
 from studytracker.domain.entity.goal import Goal
-from studytracker.domain.repository.goal_repository import GoalRepository
 
 
 @dataclass(frozen=True)
