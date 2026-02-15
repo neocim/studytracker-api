@@ -19,5 +19,9 @@ class GoalReadModel:
 
 class GoalGateway(Protocol):
     @abstractmethod
-    def get_by_id(self, id: UUID) -> GoalReadModel:
+    def get_by_id(self, goal_id: UUID) -> GoalReadModel:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def exists(self, goal_id: UUID) -> bool:
         raise NotImplementedError
