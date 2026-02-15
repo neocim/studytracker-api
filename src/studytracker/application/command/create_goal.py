@@ -20,6 +20,7 @@ class CreateGoalRequest(Request[None]):
     description: str | None = None
     is_success: bool | None = None
 
+
 class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
     def __init__(self, goal_gateway: GoalGateway, goal_repository: GoalRepository) -> None:
         self._goal_gateway = goal_gateway
@@ -28,7 +29,6 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
     async def handle(self, request: CreateGoalRequest) -> None:
         if request.period_start >= request.period_end:
             raise InvalidPeriodRange
-        
-        if not (request.parent_id is None):
-            if not self._goal_gateway.exists(request.parent_id):
-                raise GoalNotFound
+
+        if request.parent_id is not None and not self._goal_gateway.exists(request.parent_id):
+            raise GoalNotFound
