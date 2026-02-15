@@ -6,7 +6,8 @@ from uuid import UUID
 from bazario import Request
 from bazario.asyncio import RequestHandler
 
-from studytracker.application.errors.goal import GoalNotFound, InvalidPeriodRange
+from studytracker.application.error.goal import InvalidPeriodRange, ParentGoalNotFound
+from studytracker.application.port.data_context import DataContext
 from studytracker.application.query.gateway.goal import GoalGateway
 from studytracker.domain.entity.goal import Goal
 from studytracker.domain.repository.goal_repository import GoalRepository
@@ -24,16 +25,16 @@ class CreateGoalRequest(Request[None]):
 
 
 class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
-    def __init__(self, goal_gateway: GoalGateway, goal_repository: GoalRepository) -> None:
+    def __init__(self, goal_gateway: GoalGateway, data_context: DataContext) -> None:
         self._goal_gateway = goal_gateway
-        self._goal_repository = goal_repository
+        self._data_context = data_context
 
     async def handle(self, request: CreateGoalRequest) -> None:
         if request.period_start >= request.period_end:
             raise InvalidPeriodRange
 
         if request.parent_id is not None and not self._goal_gateway.exists(request.parent_id):
-            raise GoalNotFound
+            raise ParentGoalNotFound
 
         goal_id = uuid.uuid4()
         new_goal = (
@@ -49,4 +50,5 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
             ),
         )
 
-        self._goal_repository.add(new_goal)
+        self._data_context.goal_repository.add(new_goal)
+        self._data_context.commit()

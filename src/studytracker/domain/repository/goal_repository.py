@@ -10,5 +10,5 @@ class GoalRepository(Protocol):
         raise NotImplementedError
 
     @abstractmethod
-    def remove(self, goal: Goal) -> None:
+    async def delete(self, goal: Goal) -> None:
         raise NotImplementedError

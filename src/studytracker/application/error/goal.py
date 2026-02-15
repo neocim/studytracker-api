@@ -9,6 +9,6 @@ class InvalidPeriodRange:
 
 
 @app_error
-class GoalNotFound:
-    message: str = "Goal not found"
+class ParentGoalNotFound:
+    message: str = "Parent goal not found"
     goal_id: UUID
