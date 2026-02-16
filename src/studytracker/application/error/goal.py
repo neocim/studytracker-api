@@ -10,5 +10,9 @@ class InvalidPeriodRange:
 
 @app_error
 class ParentGoalNotFound:
-    message: str = "Parent goal not found"
-    goal_id: UUID
+    def __init__(self, goal_id: UUID) -> None:
+        self._goal_id = goal_id
+
+    @property
+    def message(self) -> str:
+        return f"Parent goal with id {self._goal_id} not found"

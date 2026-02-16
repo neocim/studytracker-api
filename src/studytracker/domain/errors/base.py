@@ -9,4 +9,6 @@ def app_error[ClsT](cls: type[ClsT]) -> type[ClsT]:
 
 @app_error
 class AppError(Exception):
-    message: str
+    @property
+    def message() -> str:
+        raise NotImplementedError
