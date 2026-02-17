@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from bazario import Sender
@@ -6,11 +7,27 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Response, status
 from fastapi.routing import router
 
+from studytracker.api.dto.requests.goal import CreateGoal
+from studytracker.api.dto.responses.goal import CreatedGoal
 from studytracker.application.commands.create_goal import CreateGoalRequest
+
+logger = logging.getLogger(__name__)
 
 goals_router = APIRouter(route_class=DishkaRoute, prefix="/users/{user_id}")
 
 
-@router.post("/tasks", status_code=status.HTTP_201_CREATED)
-async def create(user_id: UUID, sender: FromDishka[Sender]) -> Response:
-    response = sender.send(CreateGoalRequest())
+@router.post("/goals", status_code=status.HTTP_201_CREATED)
+async def create(user_id: UUID, sender: FromDishka[Sender], request: CreateGoal, response: Response) -> CreatedGoal:
+    logger.info("Request to create a goal")
+
+    result = await sender.send(
+        CreateGoalRequest(
+            user_id=user_id,
+            name=request.name,
+            period_start=request.period_start,
+            period_end=request.period_end,
+            parent_id=request.parent_id,
+            description=request.description,
+            is_success=request.is_success,
+        ),
+    )
