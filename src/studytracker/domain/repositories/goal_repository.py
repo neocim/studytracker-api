@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Protocol
 
-from studytracker.domain.entity.goal import Goal
+from studytracker.domain.entities.goal import Goal
 
 
 class GoalRepository(Protocol):

@@ -6,10 +6,10 @@ from uuid import UUID
 from bazario import Request
 from bazario.asyncio import RequestHandler
 
-from studytracker.application.error.goal import InvalidPeriodRange, ParentGoalNotFound
-from studytracker.application.port.data_context import DataContext
-from studytracker.application.query.gateway.goal import GoalGateway
-from studytracker.domain.entity.goal import Goal
+from studytracker.application.errors.goal import InvalidPeriodRange, ParentGoalNotFound
+from studytracker.application.ports.data_context import DataContext
+from studytracker.application.queries.gateways.goal import GoalGateway
+from studytracker.domain.entities.goal import Goal
 
 
 @dataclass(frozen=True)
