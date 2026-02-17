@@ -5,8 +5,8 @@ from pathlib import Path
 import toml_rs
 from adaptix import Retort
 
+from studytracker.api.config import ApiConfig
 from studytracker.infrastructure.database.config import DatabaseConfig
-from studytracker.presentation.config import ApiConfig
 
 retort = Retort()
 
