@@ -32,7 +32,9 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
         if request.period_start >= request.period_end:
             raise InvalidPeriodRange
 
-        if request.parent_id is not None and not self._goal_gateway.exists(request.parent_id):
+        goal_exists = await self._goal_gateway.exists(request.parent_id)
+
+        if request.parent_id is not None and not goal_exists:
             raise ParentGoalNotFound
 
         goal_id = uuid.uuid4()

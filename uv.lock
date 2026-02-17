@@ -470,6 +470,7 @@ dependencies = [
     { name = "bazario" },
     { name = "dishka" },
     { name = "fastapi" },
+    { name = "pydantic" },
     { name = "sqlalchemy", extra = ["postgresql-asyncpg"] },
     { name = "toml-rs" },
 ]
@@ -492,6 +493,7 @@ requires-dist = [
     { name = "dishka", specifier = ">=1.8.0" },
     { name = "fastapi", specifier = ">=0.128.8" },
     { name = "mypy", marker = "extra == 'lint'", specifier = ">=1.19.1" },
+    { name = "pydantic", specifier = ">=2.12.5" },
     { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.15.0" },
     { name = "sqlalchemy", extras = ["postgresql-asyncpg"], specifier = ">=2.0.46" },
     { name = "studytracker", extras = ["lint"], marker = "extra == 'dev'" },

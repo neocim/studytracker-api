@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from studytracker.domain.entity.goal import Goal
-from studytracker.domain.repository.goal_repository import GoalRepository
+from studytracker.domain.entities.goal import Goal
+from studytracker.domain.repositories.goal_repository import GoalRepository
 
 
 class SQLAlchemyGoalRepository(GoalRepository):
