@@ -5,7 +5,7 @@ from uuid import UUID
 from bazario import Request
 from bazario.asyncio import RequestHandler
 
-from studytracker.application.errors.goal import InvalidPeriodRange, ParentGoalNotFound
+from studytracker.application.errors.goal import InvalidPeriodRangeError, ParentGoalNotFoundError
 from studytracker.application.ports.data_context import DataContext
 from studytracker.application.ports.id_generator import IDGenerator
 from studytracker.application.queries.gateways.goal import GoalGateway
@@ -31,12 +31,12 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
 
     async def handle(self, request: CreateGoalRequest) -> None:
         if request.period_start >= request.period_end:
-            raise InvalidPeriodRange
+            raise InvalidPeriodRangeError
 
         goal_exists = await self._goal_gateway.exists(request.parent_id)
 
         if request.parent_id is not None and not goal_exists:
-            raise ParentGoalNotFound
+            raise ParentGoalNotFoundError
 
         goal_id = self._id_generator.get_uuid()
         new_goal = (

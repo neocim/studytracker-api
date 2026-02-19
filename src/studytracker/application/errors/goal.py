@@ -20,4 +20,4 @@ class ParentGoalNotFoundError(AppError):
 
     @property
     def message(self) -> str:
-        return f"Parent goal with id {self._goal_id} not found"
+        return f"Parent goal with id {self.goal_id} not found"
