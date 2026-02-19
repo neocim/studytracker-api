@@ -1,10 +1,17 @@
+from pydantic import BaseModel
+
 from studytracker.domain.errors.base import AppError, app_error
+
+
+class ErrorResponse(BaseModel):
+    code: str
+    message: str
 
 
 @app_error
 class InternalServerError(AppError):
-    code="INTERNAL_SERVER_ERROR"
-    
+    code = "INTERNAL_SERVER_ERROR"
+    exception: Exception
 
     @property
     def message(self) -> str:
