@@ -5,7 +5,6 @@ from bazario import Sender
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Response, status
-from fastapi.routing import router
 
 from studytracker.api.dto.requests.goal import CreateGoal
 from studytracker.api.dto.responses.goal import CreatedGoal
@@ -13,7 +12,7 @@ from studytracker.application.commands.create_goal import CreateGoalRequest
 
 logger = logging.getLogger(__name__)
 
-goals_router = APIRouter(route_class=DishkaRoute, prefix="/users/{user_id}")
+router = APIRouter(route_class=DishkaRoute, prefix="/users/{user_id}")
 
 
 @router.post("/goals", status_code=status.HTTP_422)

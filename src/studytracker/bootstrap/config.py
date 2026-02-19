@@ -5,7 +5,7 @@ from pathlib import Path
 import toml_rs
 from adaptix import Retort
 
-from studytracker.api.config import ApiConfig
+from studytracker.api.config import APIConfig
 from studytracker.infrastructure.database.config import DatabaseConfig
 
 retort = Retort()
@@ -14,7 +14,7 @@ retort = Retort()
 @dataclass(slots=True, kw_only=True)
 class Config:
     database: DatabaseConfig
-    api: ApiConfig
+    api: APIConfig
 
 
 def get_config_path() -> Path:

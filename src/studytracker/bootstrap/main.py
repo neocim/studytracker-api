@@ -1,15 +1,25 @@
+from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 
-from studytracker.bootstrap.config import load_config
+from studytracker.api import add_exception_handler, add_routers
+from studytracker.bootstrap.config import Config, load_config
+from studytracker.bootstrap.di.container import get_async_contatiner
 
 
-def create_fastapi_app() -> FastAPI:
+def create_app(config: Config) -> FastAPI:
     app = FastAPI()
 
+    dishka_container = get_async_contatiner(config)
+    setup_dishka(dishka_container, app)
 
-def main() -> None:
+    add_routers(app)
+    add_exception_handler(app)
+
+    return app
+
+
+def get_fastapi_app() -> FastAPI:
     config = load_config()
+    app = create_app(config)
 
-
-if __name__ == "__main__":
-    main()
+    return app

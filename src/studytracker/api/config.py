@@ -2,6 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass(slots=True, kw_only=True)
-class ApiConfig:
+class APIConfig:
     host: str
     port: int
