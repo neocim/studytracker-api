@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 goals_router = APIRouter(route_class=DishkaRoute, prefix="/users/{user_id}")
 
 
-@router.post("/goals", status_code=status.HTTP_201_CREATED)
+@router.post("/goals", status_code=status.HTTP_422)
 async def create(user_id: UUID, sender: FromDishka[Sender], request: CreateGoal, response: Response) -> CreatedGoal:
     logger.info("Request to create a goal")
 
