@@ -1,4 +1,3 @@
-import uuid
 from dataclasses import dataclass
 from datetime import date
 from uuid import UUID
@@ -8,6 +7,7 @@ from bazario.asyncio import RequestHandler
 
 from studytracker.application.errors.goal import InvalidPeriodRange, ParentGoalNotFound
 from studytracker.application.ports.data_context import DataContext
+from studytracker.application.ports.id_generator import IDGenerator
 from studytracker.application.queries.gateways.goal import GoalGateway
 from studytracker.domain.entities.goal import Goal
 
@@ -24,9 +24,10 @@ class CreateGoalRequest(Request[None]):
 
 
 class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
-    def __init__(self, goal_gateway: GoalGateway, data_context: DataContext) -> None:
+    def __init__(self, goal_gateway: GoalGateway, data_context: DataContext, id_generator: IDGenerator) -> None:
         self._goal_gateway = goal_gateway
         self._data_context = data_context
+        self._id_generator = id_generator
 
     async def handle(self, request: CreateGoalRequest) -> None:
         if request.period_start >= request.period_end:
@@ -37,7 +38,7 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
         if request.parent_id is not None and not goal_exists:
             raise ParentGoalNotFound
 
-        goal_id = uuid.uuid4()
+        goal_id = self._id_generator.get_uuid()
         new_goal = (
             Goal(
                 entity_id=goal_id,
