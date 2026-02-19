@@ -2,7 +2,7 @@ from dishka import AsyncContainer, make_async_container
 
 from studytracker.api.config import APIConfig
 from studytracker.bootstrap.config import Config
-from studytracker.bootstrap.di.provider.config import ConfigProvider
+from studytracker.bootstrap.di.providers.config import ConfigProvider
 from studytracker.infrastructure.database.config import DatabaseConfig
 
 
