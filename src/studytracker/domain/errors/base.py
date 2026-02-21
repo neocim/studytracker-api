@@ -12,5 +12,5 @@ class AppError(Exception):
     code: ClassVar[str]
 
     @property
-    def message() -> str:
+    def message(self) -> str:
         raise NotImplementedError
