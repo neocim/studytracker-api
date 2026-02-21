@@ -53,4 +53,4 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
         )
 
         self._data_context.goal_repository.add(new_goal)
-        self._data_context.commit()
+        await self._data_context.commit()

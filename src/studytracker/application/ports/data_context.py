@@ -8,5 +8,5 @@ class DataContext(Protocol):
     goal_repository: GoalRepository
 
     @abstractmethod
-    def commit(self) -> None:
+    async def commit(self) -> None:
         raise NotImplementedError
