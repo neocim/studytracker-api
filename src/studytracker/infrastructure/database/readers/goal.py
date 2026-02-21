@@ -3,12 +3,12 @@ from uuid import UUID
 from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from studytracker.application.queries.gateways.goal import GoalGateway
 from studytracker.domain.entities.goal import Goal
+from studytracker.domain.readers.goal import GoalReader
 from studytracker.infrastructure.database.models.goal import GOALS_TABLE
 
 
-class SQLAlchemyGoalGateway(GoalGateway):
+class SQLAlchemyGoalReader(GoalReader):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 

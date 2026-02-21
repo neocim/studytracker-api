@@ -8,8 +8,8 @@ from bazario.asyncio import RequestHandler
 from studytracker.application.errors.goal import InvalidPeriodRangeError, ParentGoalNotFoundError
 from studytracker.application.ports.data_context import DataContext
 from studytracker.application.ports.id_generator import IDGenerator
-from studytracker.application.queries.gateways.goal import GoalGateway
 from studytracker.domain.entities.goal import Goal
+from studytracker.domain.readers.goal import GoalReader
 
 
 @dataclass(frozen=True)
@@ -24,8 +24,8 @@ class CreateGoalRequest(Request[None]):
 
 
 class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
-    def __init__(self, goal_gateway: GoalGateway, data_context: DataContext, id_generator: IDGenerator) -> None:
-        self._goal_gateway = goal_gateway
+    def __init__(self, goal_reader: GoalReader, data_context: DataContext, id_generator: IDGenerator) -> None:
+        self._goal_reader = goal_reader
         self._data_context = data_context
         self._id_generator = id_generator
 
@@ -33,7 +33,7 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, None]):
         if request.period_start >= request.period_end:
             raise InvalidPeriodRangeError
 
-        goal_exists = await self._goal_gateway.exists(request.parent_id)
+        goal_exists = await self._goal_reader.exists(request.parent_id)
 
         if request.parent_id is not None and not goal_exists:
             raise ParentGoalNotFoundError

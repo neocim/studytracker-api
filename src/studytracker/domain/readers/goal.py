@@ -5,7 +5,7 @@ from uuid import UUID
 from studytracker.domain.entities.goal import Goal
 
 
-class GoalGateway(Protocol):
+class GoalReader(Protocol):
     @abstractmethod
     async def get_by_id(self, goal_id: UUID) -> Goal | None:
         raise NotImplementedError
