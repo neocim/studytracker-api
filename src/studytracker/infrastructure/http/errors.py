@@ -1,4 +1,5 @@
 from typing import override
+
 from pydantic import BaseModel
 
 from studytracker.domain.errors.base import AppError, app_error
