@@ -25,6 +25,7 @@ lint = ["mypy>=1.19.1", "ruff>=0.15.0"]
 dev = ['studytracker[lint]']
 
 [tool.mypy]
+ignore_missing_imports = true
 strict = true
 strict_bytes = true
 local_partial_types = true
