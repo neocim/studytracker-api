@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, override
 from uuid import UUID
 
 from studytracker.domain.errors.base import AppError, app_error
@@ -8,6 +8,7 @@ from studytracker.domain.errors.base import AppError, app_error
 class InvalidPeriodRangeError(AppError):
     code: ClassVar[str] = "UNPROCESSABLE_ENTITY"
 
+    @override
     @property
     def message(self) -> str:
         return "Start period should be less than the end period"
@@ -18,6 +19,7 @@ class ParentGoalNotFoundError(AppError):
     code: ClassVar[str] = "NOT_FOUND"
     goal_id: UUID
 
+    @override
     @property
     def message(self) -> str:
         return f"Parent goal with id {self.goal_id} not found"

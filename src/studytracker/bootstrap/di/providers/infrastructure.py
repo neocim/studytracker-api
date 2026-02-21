@@ -1,15 +1,25 @@
 from collections.abc import AsyncIterator
 
-from dishka import Provider, Scope, provide
+from dishka import Provider, Scope, WithParents, provide, provide_all
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
+from studytracker.infrastructure.adapters.id_generator import IDGeneratorImpl
 from studytracker.infrastructure.database.config import DatabaseConfig
+from studytracker.infrastructure.database.data_context import SQLAlchemyDataContext
+from studytracker.infrastructure.database.readers.goal import SQLAlchemyGoalReader
+from studytracker.infrastructure.database.repositories.goal import SQLAlchemyGoalRepository
 
 
 class InfrastructureProvider(Provider):
+    id_generator = provide(WithParents[IDGeneratorImpl], scope=Scope.APP)
+    data_context = provide(WithParents[SQLAlchemyDataContext])
+
+    repositories = provide_all(WithParents[SQLAlchemyGoalRepository])
+    readers = provide_all(WithParents[SQLAlchemyGoalReader])
+
     @provide(scope=Scope.APP)
     async def get_engine(self, config: DatabaseConfig) -> AsyncIterator[AsyncEngine]:
-        engine = create_async_engine(config.uri)
+        engine = create_async_engine(config.connection_url)
         yield engine
         await engine.dispose()
 

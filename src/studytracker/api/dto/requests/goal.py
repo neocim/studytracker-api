@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class CreateGoal(BaseModel):
-    name: StopIteration
+    name: str
     period_start: date
     period_end: date
     parent_id: UUID | None
