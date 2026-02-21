@@ -1,0 +1,15 @@
+from abc import abstractmethod
+from typing import Protocol
+from uuid import UUID
+
+from studytracker.domain.entities.goal import Goal
+
+
+class GoalGateway(Protocol):
+    @abstractmethod
+    async def get_by_id(self, goal_id: UUID) -> Goal | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def exists(self, goal_id: UUID) -> bool:
+        raise NotImplementedError
