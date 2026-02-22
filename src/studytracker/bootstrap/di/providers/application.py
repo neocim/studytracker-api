@@ -6,7 +6,7 @@ from studytracker.application.commands.create_goal import CreateGoalHandler, Cre
 
 
 class ApplicationProvider(Provider):
-    scope=Scope.REQUEST
+    scope = Scope.REQUEST
 
     handlers = provide_all(WithParents[CreateGoalHandler])
 
