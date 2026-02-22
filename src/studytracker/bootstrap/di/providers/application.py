@@ -1,13 +1,17 @@
 from bazario.asyncio import Dispatcher, Registry
 from bazario.asyncio.resolvers.dishka import DishkaResolver
-from dishka import Provider, Scope, WithParents, provide
+from dishka import Provider, Scope, WithParents, provide, provide_all
 
 from studytracker.application.commands.create_goal import CreateGoalHandler, CreateGoalRequest
 
 
 class ApplicationProvider(Provider):
-    resolver = provide(WithParents[DishkaResolver], scope=Scope.REQUEST)
-    dispatcher = provide(WithParents[Dispatcher], scope=Scope.REQUEST)
+    scope=Scope.REQUEST
+
+    handlers = provide_all(WithParents[CreateGoalHandler])
+
+    resolver = provide(WithParents[DishkaResolver])
+    dispatcher = provide(WithParents[Dispatcher])
 
     @provide(scope=Scope.APP)
     def registry(self) -> Registry:
