@@ -1,3 +1,4 @@
+import uvicorn
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 
@@ -18,8 +19,14 @@ def create_app(config: Config) -> FastAPI:
     return app
 
 
-def get_fastapi_app() -> FastAPI:
+def main() -> None:
     config = load_config(get_config_path())
-    app = create_app(config)
+    uvicorn.run(
+        create_app(config),
+        port=config.api.port,
+        host=config.api.host,
+    )
 
-    return app
+
+if __name__ == "__main__":
+    main()

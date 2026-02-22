@@ -6,8 +6,8 @@ from studytracker.application.commands.create_goal import CreateGoalHandler, Cre
 
 
 class ApplicationProvider(Provider):
-    resolver = provide(WithParents[DishkaResolver])
-    dispatcher = provide(WithParents[Dispatcher])
+    resolver = provide(WithParents[DishkaResolver], scope=Scope.REQUEST)
+    dispatcher = provide(WithParents[Dispatcher], scope=Scope.REQUEST)
 
     @provide(scope=Scope.APP)
     def registry(self) -> Registry:

@@ -12,10 +12,10 @@ from studytracker.infrastructure.database.repositories.goal import SQLAlchemyGoa
 
 class InfrastructureProvider(Provider):
     id_generator = provide(WithParents[IDGeneratorImpl], scope=Scope.APP)
-    data_context = provide(WithParents[SQLAlchemyDataContext])
+    data_context = provide(WithParents[SQLAlchemyDataContext], scope=Scope.REQUEST)
 
-    repositories = provide_all(WithParents[SQLAlchemyGoalRepository])
-    readers = provide_all(WithParents[SQLAlchemyGoalReader])
+    repositories = provide_all(WithParents[SQLAlchemyGoalRepository], scope=Scope.REQUEST)
+    readers = provide_all(WithParents[SQLAlchemyGoalReader], scope=Scope.REQUEST)
 
     @provide(scope=Scope.APP)
     async def get_engine(self, config: DatabaseConfig) -> AsyncIterator[AsyncEngine]:
