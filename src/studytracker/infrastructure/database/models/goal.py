@@ -38,6 +38,14 @@ MAPPER_REGISTRY.map_imperatively(
     Goal,
     GOALS_TABLE,
     properties={
+        "_entity_id": GOALS_TABLE.c.id,
+        "_parent_id": GOALS_TABLE.c.parent_id,
+        "_user_id": GOALS_TABLE.c.user_id,
+        "_period_start": GOALS_TABLE.c.period_start,
+        "_period_end": GOALS_TABLE.c.period_end,
+        "_name": GOALS_TABLE.c.name,
+        "_description": GOALS_TABLE.c.description,
+        "_goal_status": GOALS_TABLE.c.goal_status,
         "_parent": relationship(
             "Goal",
             remote_side=[GOALS_TABLE.c.id],
@@ -50,13 +58,5 @@ MAPPER_REGISTRY.map_imperatively(
             cascade="all, delete-orphan",
             uselist=True,
         ),
-        "_entity_id": GOALS_TABLE.c.id,
-        "_parent_id": GOALS_TABLE.c.parent_id,
-        "_user_id": GOALS_TABLE.c.user_id,
-        "_period_start": GOALS_TABLE.c.period_start,
-        "_period_end": GOALS_TABLE.c.period_end,
-        "_name": GOALS_TABLE.c.name,
-        "_description": GOALS_TABLE.c.description,
-        "_goal_status": GOALS_TABLE.c.goal_status,
     },
 )
