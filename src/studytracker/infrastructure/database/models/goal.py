@@ -7,14 +7,27 @@ from studytracker.infrastructure.database.models.base import MAPPER_REGISTRY
 GOALS_TABLE = Table(
     "goals",
     MAPPER_REGISTRY.metadata,
-    Column("id", UUID, index=True, primary_key=True, nullable=False),
-    Column("parent_id", UUID, ForeignKey("goals.id", ondelete="CASCADE"), nullable=True),
+    Column("id", UUID, primary_key=True, nullable=False),
+    Column(
+        "parent_id",
+        UUID,
+        ForeignKey("goals.id", ondelete="CASCADE"),
+        index=True,
+        nullable=True,
+    ),
     Column("user_id", UUID, index=True, nullable=False),
     Column("name", String, nullable=False),
     Column("description", String, nullable=True),
     Column(
         "goal_status",
-        Enum("PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED", "CANCELED", name="goal_status_enum"),
+        Enum(
+            "PENDING",
+            "IN_PROGRESS",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELED",
+            name="goal_status_enum",
+        ),
         nullable=False,
     ),
     Column("period_start", Date, nullable=False),
@@ -25,6 +38,18 @@ MAPPER_REGISTRY.map_imperatively(
     Goal,
     GOALS_TABLE,
     properties={
+        "_parent": relationship(
+            "Goal",
+            remote_side=[GOALS_TABLE.c.id],
+            backref="_subgoals",
+            uselist=False,
+        ),
+        "_subgoals": relationship(
+            Goal,
+            backref="_parent",
+            cascade="all, delete-orphan",
+            uselist=True,
+        ),
         "_entity_id": GOALS_TABLE.c.id,
         "_parent_id": GOALS_TABLE.c.parent_id,
         "_user_id": GOALS_TABLE.c.user_id,
@@ -33,7 +58,5 @@ MAPPER_REGISTRY.map_imperatively(
         "_name": GOALS_TABLE.c.name,
         "_description": GOALS_TABLE.c.description,
         "_goal_status": GOALS_TABLE.c.goal_status,
-        "_parent": relationship("Goal", remote_side=[GOALS_TABLE.c.id], backref="_subgoals", uselist=False),
-        "_subgoals": relationship(Goal, backref="_parent", cascade="all, delete-orphan", uselist=True),
     },
 )
