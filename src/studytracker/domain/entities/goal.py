@@ -25,3 +25,31 @@ class Goal(Entity[UUID]):
         self._name = name
         self._description = description
         self._is_success = is_success
+
+    @property
+    def parent_id(self) -> UUID | None:
+        return self._parent_id
+
+    @property
+    def user_id(self) -> UUID:
+        return self._user_id
+
+    @property
+    def period_start(self) -> date:
+        return self._period_start
+
+    @property
+    def period_end(self) -> date:
+        return self._period_end
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def description(self) -> str | None:
+        return self._description
+
+    @property
+    def is_success(self) -> bool | None:
+        return self._is_success
