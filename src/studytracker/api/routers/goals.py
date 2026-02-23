@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["goals"], route_class=DishkaRoute, prefix="/users/{user_id}")
 
+# TODO: Enpoints to get list of user goals, subgoals, update goal status
+
 
 @router.post("/goals", status_code=status.HTTP_201_CREATED)
 async def create_goal(
