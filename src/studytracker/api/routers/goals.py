@@ -30,7 +30,6 @@ async def create_goal(
         name=user_request.name,
         period_start=user_request.period_start,
         period_end=user_request.period_end,
-        parent_id=user_request.parent_id,
         description=user_request.description,
         goal_status=user_request.goal_status,
     )

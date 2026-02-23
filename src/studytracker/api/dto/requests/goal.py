@@ -9,5 +9,5 @@ class CreateGoal(BaseModel):
     name: str
     period_start: date
     period_end: date
-    goal_status: GoalStatus | None = None
+    goal_status: GoalStatus | None
     description: str | None

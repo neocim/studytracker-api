@@ -9,6 +9,7 @@ from studytracker.domain.errors.goal import (
     InvalidStatusForCompletedGoalError,
     InvalidStatusForInProgressGoalError,
     InvalidStatusForNotStartedGoalError,
+    InvalidSubgoalPeriodRangeError,
 )
 
 
@@ -34,7 +35,6 @@ class Goal(Entity[UUID]):
         period_end: date,
         name: str,
         goal_status: GoalStatus | None = None,
-        parent_id: UUID | None = None,
         description: str | None = None,
     ) -> None:
         super().__init__(entity_id=entity_id)
@@ -44,16 +44,28 @@ class Goal(Entity[UUID]):
 
         self._period_start = period_start
         self._period_end = period_end
-        self._parent_id = parent_id
         self._user_id = user_id
         self._name = name
         self._description = description
+
+        self._parent_id: UUID | None = None
+        self._subgoals: list[Goal] = []
 
     def set_name(self, new_name: str) -> None:
         self._name = new_name
 
     def set_description(self, new_description: str | None) -> None:
         self._description = new_description
+
+    def set_parent_id(self, parent_id: UUID) -> None:
+        self._parent_id = parent_id
+
+    def add_subgoal(self, subgoal: "Goal") -> None:
+        if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
+            raise InvalidSubgoalPeriodRangeError
+
+        subgoal.set_parent_id(self.entity_id)
+        self._subgoals.append(subgoal)
 
     def _validate_and_get_status(
         self,
@@ -120,3 +132,7 @@ class Goal(Entity[UUID]):
     @property
     def goal_status(self) -> GoalStatus:
         return self._goal_status
+
+    @property
+    def subgoals(self) -> list["Goal"]:
+        return self._subgoals

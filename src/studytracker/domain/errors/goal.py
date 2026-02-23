@@ -14,6 +14,16 @@ class InvalidPeriodRangeError(AppError):
 
 
 @app_error
+class InvalidSubgoalPeriodRangeError(AppError):
+    code: ClassVar[str] = "INVALID_SUBGOAL_PERIOD_RANGE"
+
+    @override
+    @property
+    def message(self) -> str:
+        return "Subgoal period should be within the parent goal period"
+
+
+@app_error
 class InvalidStatusForCompletedGoalError(AppError):
     code: ClassVar[str] = "INVALID_STATUS"
 
