@@ -5,16 +5,6 @@ from studytracker.domain.errors.base import AppError, app_error
 
 
 @app_error
-class InvalidPeriodRangeError(AppError):
-    code: ClassVar[str] = "UNPROCESSABLE_ENTITY"
-
-    @override
-    @property
-    def message(self) -> str:
-        return "Start period should be less than the end period"
-
-
-@app_error
 class ParentGoalNotFoundError(AppError):
     code: ClassVar[str] = "NOT_FOUND"
     goal_id: UUID

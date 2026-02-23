@@ -1,7 +1,18 @@
+import datetime
 from datetime import date
+from enum import StrEnum
 from uuid import UUID
 
 from studytracker.domain.entities.base import Entity
+from studytracker.domain.errors.goal import InvalidPeriodRangeError
+
+
+class GoalStatus(StrEnum):
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    CANCELED = "CANCELED"
 
 
 class Goal(Entity[UUID]):
@@ -12,19 +23,22 @@ class Goal(Entity[UUID]):
         period_start: date,
         period_end: date,
         name: str,
+        goal_status: GoalStatus = GoalStatus.PENDING,
         parent_id: UUID | None = None,
         description: str | None = None,
-        is_success: bool | None = None,
     ) -> None:
         super().__init__(entity_id=entity_id)
 
+        self._validate_period_range()
+        self._init_status()
+
         self._parent_id = parent_id
         self._user_id = user_id
+
         self._period_start = period_start
         self._period_end = period_end
         self._name = name
         self._description = description
-        self._is_success = is_success
 
     @property
     def parent_id(self) -> UUID | None:
@@ -51,5 +65,19 @@ class Goal(Entity[UUID]):
         return self._description
 
     @property
-    def is_success(self) -> bool | None:
-        return self._is_success
+    def goal_status(self) -> GoalStatus:
+        return self._goal_status
+
+    def _init_status(self) -> None:
+        today = datetime.datetime.now(tz=datetime.UTC).date()
+
+        if self._period_start > today:
+            self._goal_status = GoalStatus.PENDING
+        elif self._period_start <= today <= self._period_end:
+            self._goal_status = GoalStatus.IN_PROGRESS
+        elif self._period_end < today:
+            self._goal_status = GoalStatus.COMPLETED
+
+    def _validate_period_range(self) -> None:
+        if self._period_start >= self._period_end:
+            raise InvalidPeriodRangeError
