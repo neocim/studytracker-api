@@ -22,6 +22,7 @@ class GoalStatus(StrEnum):
 
 VALID_STATUSES_FOR_COMPLETED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELED]
 VALID_STATUSES_FOR_NOT_STARTED_GOAL = [GoalStatus.PENDING, GoalStatus.CANCELED]
+VALID_STATUSES_FOR_IN_PROGRESS_GOAL = [GoalStatus.IN_PROGRESS, GoalStatus.CANCELED]
 
 
 class Goal(Entity[UUID]):
@@ -82,7 +83,7 @@ class Goal(Entity[UUID]):
         if today > period_end and goal_status not in VALID_STATUSES_FOR_COMPLETED_GOAL:
             raise InvalidStatusForCompletedGoalError
 
-        if period_start <= today <= period_end and goal_status not in [GoalStatus.IN_PROGRESS, GoalStatus.CANCELED]:
+        if period_start <= today <= period_end and goal_status not in VALID_STATUSES_FOR_IN_PROGRESS_GOAL:
             raise InvalidStatusForInProgressGoalError
 
         if period_start >= today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
