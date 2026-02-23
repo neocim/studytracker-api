@@ -1,3 +1,4 @@
+from typing import override
 from uuid import UUID
 
 from sqlalchemy import exists, select
@@ -12,9 +13,11 @@ class SQLAlchemyGoalReader(GoalReader):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
+    @override
     async def get_by_id(self, goal_id: UUID) -> Goal | None:
         return await self._session.get(Goal, goal_id)
 
+    @override
     async def exists(self, goal_id: UUID) -> bool:
         query = select(exists().where(GOALS_TABLE.c.id == goal_id))
 

@@ -4,6 +4,7 @@ from uuid import UUID
 
 from bazario import Request
 from bazario.asyncio import RequestHandler
+
 from studytracker.application.dto.goal import GoalReadModel
 from studytracker.application.errors.goal import GoalNotFoundError
 from studytracker.domain.readers.goal import GoalReader
@@ -30,8 +31,8 @@ class GetGoalHandler(RequestHandler[GetGoalRequest, GoalReadModel]):
             user_id=goal.user_id,
             name=goal.name,
             description=goal.description,
-            period_start=str(goal.period_start),
-            period_end=str(goal.period_end),
+            period_start=goal.period_start,
+            period_end=goal.period_end,
             parent_id=goal.parent_id,
             is_success=goal.is_success,
         )
