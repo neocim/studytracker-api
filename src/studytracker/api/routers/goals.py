@@ -44,8 +44,8 @@ async def create_goal(
 
 
 @router.get("/goals/{goal_id}", status_code=status.HTTP_200_OK, name="get_goal")
-async def get_goal(goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
-    get_goal = GetGoalRequest(goal_id=goal_id)
+async def get_goal(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
+    get_goal = GetGoalRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
 
     return Goal(

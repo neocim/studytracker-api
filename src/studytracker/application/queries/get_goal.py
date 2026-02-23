@@ -12,6 +12,7 @@ from studytracker.domain.readers.goal import GoalReader
 
 @dataclass(frozen=True)
 class GetGoalRequest(Request[GoalReadModel]):
+    user_id: UUID
     goal_id: UUID
 
 

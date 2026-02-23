@@ -49,7 +49,8 @@ class CreateSubgoalHandler(RequestHandler[CreateSubgoalRequest, CreatedGoal]):
             goal_status=request.goal_status,
         )
 
-        goal.add_subgoal(new_subgoal)
+        new_subgoal.set_parent(goal)
+        self._data_context.goal_repository.add(new_subgoal)
         await self._data_context.commit()
 
         return CreatedGoal(goal_id=subgoal_id)

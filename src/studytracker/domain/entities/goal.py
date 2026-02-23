@@ -49,6 +49,7 @@ class Goal(Entity[UUID]):
         self._description = description
 
         self._parent: Goal | None = None
+        self._parent_id: UUID | None = None
         self._subgoals: list[Goal] = []
 
     def set_name(self, new_name: str) -> None:
@@ -56,6 +57,17 @@ class Goal(Entity[UUID]):
 
     def set_description(self, new_description: str | None) -> None:
         self._description = new_description
+
+    def set_parent(self, parent_goal: "Goal") -> None:
+        ########################################
+        if parent_goal.entity_id == self.entity_id:
+            raise ValueError("A goal cannot be its own parent")
+
+        ####################################### UPDAAAAATEE THIS FUCN dfont forget
+        if self._parent is not None:
+            raise ValueError("Parent goal is already set. Changing parent is not allowed.")
+
+        self._parent = parent_goal
 
     def add_subgoal(self, subgoal: "Goal") -> None:
         if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
@@ -94,7 +106,7 @@ class Goal(Entity[UUID]):
         if period_start <= today <= period_end and goal_status not in VALID_STATUSES_FOR_IN_PROGRESS_GOAL:
             raise InvalidStatusForInProgressGoalError
 
-        if period_start >= today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
+        if period_start > today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
             raise InvalidStatusForNotStartedGoalError
 
     def _validate_period_range(self, period_start: date, period_end: date) -> None:
@@ -111,7 +123,7 @@ class Goal(Entity[UUID]):
 
     @property
     def parent_id(self) -> UUID | None:
-        return self._parent.entity_id if self._parent else None
+        return self._parent_id
 
     @property
     def period_start(self) -> date:
