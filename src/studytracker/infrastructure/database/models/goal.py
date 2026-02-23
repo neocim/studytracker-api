@@ -11,7 +11,11 @@ GOALS_TABLE = Table(
     Column("user_id", UUID, index=True, nullable=False),
     Column("name", String, nullable=False),
     Column("description", String, nullable=True),
-    Column("goal_status", Enum, nullable=True),
+    Column(
+        "goal_status",
+        Enum("PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED", "CANCELED", name="goal_status_enum"),
+        nullable=True,
+    ),
     Column("period_start", Date, nullable=False),
     Column("period_end", Date, nullable=False),
 )

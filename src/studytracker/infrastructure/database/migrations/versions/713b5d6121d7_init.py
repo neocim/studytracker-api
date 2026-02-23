@@ -1,21 +1,21 @@
-"""init
+"""Init
 
-Revision ID: 7ef70a5cde25
+Revision ID: 713b5d6121d7
 Revises:
-Create Date: 2026-02-23 18:22:26.038651
+Create Date: 2026-02-23 18:32:14.718826
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "7ef70a5cde25"
-down_revision: Union[str, Sequence[str], None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision: str = "713b5d6121d7"
+down_revision: str | Sequence[str] | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -28,7 +28,11 @@ def upgrade() -> None:
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("goal_status", sa.Enum(), nullable=True),
+        sa.Column(
+            "goal_status",
+            sa.Enum("PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED", "CANCELED", name="goal_status_enum"),
+            nullable=True,
+        ),
         sa.Column("period_start", sa.Date(), nullable=False),
         sa.Column("period_end", sa.Date(), nullable=False),
         sa.ForeignKeyConstraint(["parent_id"], ["goals.id"], ondelete="CASCADE"),
