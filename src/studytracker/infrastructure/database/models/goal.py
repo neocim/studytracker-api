@@ -1,4 +1,5 @@
-from sqlalchemy import UUID, Column, Date, Enum, String, Table
+from sqlalchemy import UUID, Column, Date, Enum, ForeignKey, String, Table
+from sqlalchemy.orm import relationship
 
 from studytracker.domain.entities.goal import Goal
 from studytracker.infrastructure.database.models.base import MAPPER_REGISTRY
@@ -7,6 +8,7 @@ GOALS_TABLE = Table(
     "goals",
     MAPPER_REGISTRY.metadata,
     Column("id", UUID, index=True, primary_key=True, nullable=False),
+    Column("parent_id", UUID, ForeignKey("goals.id", ondelete="CASCADE"), nullable=True),
     Column("user_id", UUID, index=True, nullable=False),
     Column("name", String, nullable=False),
     Column("description", String, nullable=True),
@@ -24,11 +26,14 @@ MAPPER_REGISTRY.map_imperatively(
     GOALS_TABLE,
     properties={
         "_entity_id": GOALS_TABLE.c.id,
+        "_parent_id": GOALS_TABLE.c.parent_id,
         "_user_id": GOALS_TABLE.c.user_id,
         "_period_start": GOALS_TABLE.c.period_start,
         "_period_end": GOALS_TABLE.c.period_end,
         "_name": GOALS_TABLE.c.name,
         "_description": GOALS_TABLE.c.description,
         "_goal_status": GOALS_TABLE.c.goal_status,
+        "_parent": relationship("Goal", remote_side=[GOALS_TABLE.c.id], backref="_subgoals", uselist=False),
+        "_subgoals": relationship(Goal, backref="_parent", cascade="all, delete-orphan", uselist=True),
     },
 )
