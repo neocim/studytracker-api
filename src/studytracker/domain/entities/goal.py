@@ -48,7 +48,7 @@ class Goal(Entity[UUID]):
         self._name = name
         self._description = description
 
-        self._parent_id: UUID | None = None
+        self._parent: Goal | None = None
         self._subgoals: list[Goal] = []
 
     def set_name(self, new_name: str) -> None:
@@ -57,14 +57,10 @@ class Goal(Entity[UUID]):
     def set_description(self, new_description: str | None) -> None:
         self._description = new_description
 
-    def set_parent_id(self, parent_id: UUID) -> None:
-        self._parent_id = parent_id
-
     def add_subgoal(self, subgoal: "Goal") -> None:
         if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
             raise InvalidSubgoalPeriodRangeError
 
-        subgoal.set_parent_id(self.entity_id)
         self._subgoals.append(subgoal)
 
     def _validate_and_get_status(
@@ -106,12 +102,16 @@ class Goal(Entity[UUID]):
             raise InvalidPeriodRangeError
 
     @property
-    def parent_id(self) -> UUID | None:
-        return self._parent_id
-
-    @property
     def user_id(self) -> UUID:
         return self._user_id
+
+    @property
+    def parent(self) -> "Goal | None":
+        return self._parent
+
+    @property
+    def parent_id(self) -> UUID | None:
+        return self._parent.entity_id if self._parent else None
 
     @property
     def period_start(self) -> date:
