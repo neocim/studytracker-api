@@ -49,12 +49,10 @@ MAPPER_REGISTRY.map_imperatively(
         "_parent": relationship(
             "Goal",
             remote_side=[GOALS_TABLE.c.id],
-            backref="_subgoals",
             uselist=False,
         ),
         "_subgoals": relationship(
             Goal,
-            backref="_parent",
             cascade="all, delete-orphan",
             uselist=True,
         ),

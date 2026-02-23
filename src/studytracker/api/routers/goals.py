@@ -9,7 +9,9 @@ from fastapi import APIRouter, status
 from studytracker.api.dto.requests.goal import CreateGoal
 from studytracker.api.dto.responses.goal import CreatedGoal, Goal
 from studytracker.application.commands.create_goal import CreateGoalRequest
+from studytracker.application.commands.create_subgoal import CreateSubgoalRequest
 from studytracker.application.commands.delete_goal import DeleteGoalRequest
+from studytracker.application.commands.update_goal import UpdateGoalRequest
 from studytracker.application.queries.get_goal import GetGoalRequest
 
 logger = logging.getLogger(__name__)
@@ -34,7 +36,7 @@ async def create_goal(
         goal_status=user_request.goal_status,
     )
     result = await sender.send(create_goal)
-    logger.info("Goal created")
+    logger.info("Goal created: %s", result.goal_id)
 
     return CreatedGoal(goal_id=result.goal_id)
 
@@ -54,6 +56,48 @@ async def get_goal(goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
         parent_id=result.parent_id,
         goal_status=result.goal_status,
     )
+
+
+@router.patch("/goals/{goal_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_goal(
+    goal_id: UUID,
+    sender: FromDishka[Sender],
+    name: str | None = None,
+    description: str | None = None,
+) -> None:
+    logger.info("Request to update a goal")
+
+    update_goal = UpdateGoalRequest(
+        goal_id=goal_id,
+        name=name,
+        description=description,
+    )
+    await sender.send(update_goal)
+    logger.info("Goal %s updated", goal_id)
+
+
+@router.post("/goals/{parent_id}/subgoals", status_code=status.HTTP_201_CREATED)
+async def create_subgoal(
+    parent_id: UUID,
+    user_id: UUID,
+    sender: FromDishka[Sender],
+    user_request: CreateGoal,
+) -> CreatedGoal:
+    logger.info("Request to create a subgoal")
+
+    create_subgoal = CreateSubgoalRequest(
+        user_id=user_id,
+        name=user_request.name,
+        parent_id=parent_id,
+        period_start=user_request.period_start,
+        period_end=user_request.period_end,
+        goal_status=user_request.goal_status,
+        description=user_request.description,
+    )
+    result = await sender.send(create_subgoal)
+    logger.info("Subgoal created: %s", result.goal_id)
+
+    return CreatedGoal(goal_id=result.goal_id)
 
 
 @router.delete("/goals/{goal_id}", status_code=status.HTTP_204_NO_CONTENT)

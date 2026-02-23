@@ -21,7 +21,7 @@ class CreateSubgoalRequest(Request[CreatedGoal]):
     name: str
     period_start: date
     period_end: date
-    goal_status: GoalStatus
+    goal_status: GoalStatus | None = None
     description: str | None = None
 
 
