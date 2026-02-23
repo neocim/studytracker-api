@@ -81,7 +81,7 @@ class Goal(Entity[UUID]):
         if today > period_end and goal_status not in VALID_STATUSES_FOR_COMPLETED_GOAL:
             raise InvalidStatusForCompletedGoalError
 
-        if period_start > today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
+        if period_start >= today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
             raise InvalidStatusForNotStartedGoalError
 
     def _validate_period_range(self, period_start: date, period_end: date) -> None:
