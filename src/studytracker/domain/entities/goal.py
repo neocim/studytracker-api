@@ -7,6 +7,7 @@ from studytracker.domain.entities.base import Entity
 from studytracker.domain.errors.goal import (
     InvalidPeriodRangeError,
     InvalidStatusForCompletedGoalError,
+    InvalidStatusForInProgressGoalError,
     InvalidStatusForNotStartedGoalError,
 )
 
@@ -80,6 +81,9 @@ class Goal(Entity[UUID]):
     ) -> None:
         if today > period_end and goal_status not in VALID_STATUSES_FOR_COMPLETED_GOAL:
             raise InvalidStatusForCompletedGoalError
+
+        if period_start <= today <= period_end and goal_status not in [GoalStatus.IN_PROGRESS, GoalStatus.CANCELED]:
+            raise InvalidStatusForInProgressGoalError
 
         if period_start >= today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
             raise InvalidStatusForNotStartedGoalError

@@ -31,3 +31,13 @@ class InvalidStatusForNotStartedGoalError(AppError):
     @property
     def message(self) -> str:
         return "Only PENDING or CANCELED statuses are allowed for not started goals"
+
+
+@app_error
+class InvalidStatusForInProgressGoalError(AppError):
+    code: ClassVar[str] = "INVALID_STATUS"
+
+    @override
+    @property
+    def message(self) -> str:
+        return "Only IN_PROGRESS or CANCELED statuses are allowed for in progress goals"
