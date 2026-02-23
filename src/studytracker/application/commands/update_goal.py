@@ -16,9 +16,6 @@ class UpdateGoalRequest(Request[None]):
     goal_id: UUID
     name: str | None = None
     description: str | None = None
-    period_start: date | None = None
-    period_end: date | None = None
-    is_success: bool | None = None
 
 
 class UpdateGoalHandler(RequestHandler[UpdateGoalRequest, None]):
@@ -38,14 +35,5 @@ class UpdateGoalHandler(RequestHandler[UpdateGoalRequest, None]):
 
         if request.description is not None:
             goal.description = request.description
-
-        if request.period_start is not None:
-            goal.period_start = request.period_start
-
-        if request.period_end is not None:
-            goal.period_end = request.period_end
-
-        if request.is_success is not None:
-            goal.is_success = request.is_success
 
         await self._data_context.commit()
