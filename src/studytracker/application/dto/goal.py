@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from datetime import date
 from uuid import UUID
 
+from studytracker.domain.entities.goal import GoalStatus
+
 
 @dataclass(frozen=True)
 class CreatedGoal:
@@ -15,6 +17,6 @@ class GoalReadModel:
     name: str
     period_start: date
     period_end: date
-    description: str | None
+    goal_status: GoalStatus
     parent_id: UUID | None
-    is_success: bool | None
+    description: str | None

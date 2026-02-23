@@ -31,7 +31,6 @@ class UpdateGoalHandler(RequestHandler[UpdateGoalRequest, None]):
 
         if request.name is not None:
             goal.set_name(request.name)
-
         if request.description is not None:
             goal.set_description(request.description)
 

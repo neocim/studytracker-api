@@ -4,7 +4,7 @@ from uuid import UUID
 from bazario.asyncio import Sender
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, status
 
 from studytracker.api.dto.requests.goal import CreateGoal
 from studytracker.api.dto.responses.goal import CreatedGoal, Goal
@@ -32,7 +32,7 @@ async def create_goal(
         period_end=user_request.period_end,
         parent_id=user_request.parent_id,
         description=user_request.description,
-        is_success=user_request.is_success,
+        goal_status=user_request.goal_status,
     )
     result = await sender.send(create_goal)
     logger.info("Goal created")
@@ -53,7 +53,7 @@ async def get_goal(goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
         period_start=result.period_start,
         period_end=result.period_end,
         parent_id=result.parent_id,
-        is_success=result.is_success,
+        goal_status=result.goal_status,
     )
 
 

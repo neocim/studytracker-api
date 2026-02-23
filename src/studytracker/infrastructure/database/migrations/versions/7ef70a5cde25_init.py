@@ -1,21 +1,21 @@
-"""Initial create
+"""init
 
-Revision ID: 44e8c3407dcb
+Revision ID: 7ef70a5cde25
 Revises:
-Create Date: 2026-02-13 12:11:49.303061
+Create Date: 2026-02-23 18:22:26.038651
 
 """
 
-from collections.abc import Sequence
+from typing import Sequence, Union
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "44e8c3407dcb"
-down_revision: str | Sequence[str] | None = None
-branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = None
+revision: str = "7ef70a5cde25"
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -28,7 +28,7 @@ def upgrade() -> None:
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("is_success", sa.Boolean(), nullable=True),
+        sa.Column("goal_status", sa.Enum(), nullable=True),
         sa.Column("period_start", sa.Date(), nullable=False),
         sa.Column("period_end", sa.Date(), nullable=False),
         sa.ForeignKeyConstraint(["parent_id"], ["goals.id"], ondelete="CASCADE"),

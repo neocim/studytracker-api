@@ -34,5 +34,5 @@ class GetGoalHandler(RequestHandler[GetGoalRequest, GoalReadModel]):
             period_start=goal.period_start,
             period_end=goal.period_end,
             parent_id=goal.parent_id,
-            is_success=goal.is_success,
+            goal_status=goal.goal_status,
         )

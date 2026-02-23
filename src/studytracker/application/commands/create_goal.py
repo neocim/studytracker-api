@@ -7,22 +7,22 @@ from bazario import Request
 from bazario.asyncio import RequestHandler
 
 from studytracker.application.dto.goal import CreatedGoal
-from studytracker.application.errors.goal import InvalidPeriodRangeError, ParentGoalNotFoundError
+from studytracker.application.errors.goal import ParentGoalNotFoundError
 from studytracker.application.ports.data_context import DataContext
 from studytracker.application.ports.id_generator import IDGenerator
-from studytracker.domain.entities.goal import Goal
+from studytracker.domain.entities.goal import Goal, GoalStatus
 from studytracker.domain.readers.goal import GoalReader
 
 
 @dataclass(frozen=True)
 class CreateGoalRequest(Request[CreatedGoal]):
     user_id: UUID
+    name: str
     period_start: date
     period_end: date
-    name: str
+    goal_status: GoalStatus
     parent_id: UUID | None = None
     description: str | None = None
-    is_success: bool | None = None
 
 
 class CreateGoalHandler(RequestHandler[CreateGoalRequest, CreatedGoal]):
@@ -33,9 +33,6 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, CreatedGoal]):
 
     @override
     async def handle(self, request: CreateGoalRequest) -> CreatedGoal:
-        if request.period_start >= request.period_end:
-            raise InvalidPeriodRangeError
-
         if request.parent_id is not None:
             parent_exists = await self._goal_reader.exists(request.parent_id)
 
@@ -51,7 +48,7 @@ class CreateGoalHandler(RequestHandler[CreateGoalRequest, CreatedGoal]):
             name=request.name,
             description=request.description,
             parent_id=request.parent_id,
-            is_success=request.is_success,
+            goal_status=request.goal_status,
         )
 
         self._data_context.goal_repository.add(new_goal)

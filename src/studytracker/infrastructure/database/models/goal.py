@@ -1,4 +1,4 @@
-from sqlalchemy import UUID, Boolean, Column, Date, ForeignKey, String, Table
+from sqlalchemy import UUID, Column, Date, Enum, ForeignKey, String, Table
 
 from studytracker.domain.entities.goal import Goal
 from studytracker.infrastructure.database.models.base import MAPPER_REGISTRY
@@ -11,7 +11,7 @@ GOALS_TABLE = Table(
     Column("user_id", UUID, index=True, nullable=False),
     Column("name", String, nullable=False),
     Column("description", String, nullable=True),
-    Column("is_success", Boolean, nullable=True),
+    Column("goal_status", Enum, nullable=True),
     Column("period_start", Date, nullable=False),
     Column("period_end", Date, nullable=False),
 )
@@ -27,6 +27,6 @@ MAPPER_REGISTRY.map_imperatively(
         "_period_end": GOALS_TABLE.c.period_end,
         "_name": GOALS_TABLE.c.name,
         "_description": GOALS_TABLE.c.description,
-        "_is_success": GOALS_TABLE.c.is_success,
+        "_goal_status": GOALS_TABLE.c.goal_status,
     },
 )

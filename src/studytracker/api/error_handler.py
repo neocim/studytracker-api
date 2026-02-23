@@ -3,14 +3,13 @@ import logging
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from studytracker.application.errors.goal import InvalidPeriodRangeError, ParentGoalNotFoundError
+from studytracker.application.errors.goal import ParentGoalNotFoundError
 from studytracker.domain.errors.base import AppError
 from studytracker.infrastructure.http.errors import ErrorResponse, InternalServerError
 
 logger = logging.getLogger(__name__)
 
 error_to_http_status: dict[type[AppError], int] = {
-    InvalidPeriodRangeError: 422,
     ParentGoalNotFoundError: 404,
 }
 
