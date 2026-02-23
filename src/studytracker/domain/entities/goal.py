@@ -19,6 +19,10 @@ class GoalStatus(StrEnum):
     CANCELED = "CANCELED"
 
 
+VALID_STATUSES_FOR_COMPLETED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELED]
+VALID_STATUSES_FOR_NOT_STARTED_GOAL = [GoalStatus.PENDING, GoalStatus.CANCELED]
+
+
 class Goal(Entity[UUID]):
     def __init__(
         self,
@@ -70,14 +74,10 @@ class Goal(Entity[UUID]):
         goal_status: GoalStatus,
         today: date,
     ) -> None:
-        if today > period_end and goal_status not in [
-            GoalStatus.SUCCEEDED,
-            GoalStatus.FAILED,
-            GoalStatus.CANCELED,
-        ]:
+        if today > period_end and goal_status not in VALID_STATUSES_FOR_COMPLETED_GOAL:
             raise InvalidStatusForCompletedGoalError
 
-        if period_start > today and goal_status not in [GoalStatus.PENDING, GoalStatus.CANCELED]:
+        if period_start > today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
             raise InvalidStatusForNotStartedGoalError
 
     def _validate_period_range(self, period_start: date, period_end: date) -> None:
