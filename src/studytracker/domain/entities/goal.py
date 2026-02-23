@@ -47,6 +47,12 @@ class Goal(Entity[UUID]):
         self._name = name
         self._description = description
 
+    def set_name(self, new_name: str) -> None:
+        self._name = new_name
+
+    def set_description(self, new_description: str | None) -> None:
+        self._description = new_description
+
     def _validate_and_get_status(
         self,
         period_start: date,
@@ -59,13 +65,11 @@ class Goal(Entity[UUID]):
             self._validate_provided_status(period_start, period_end, goal_status, today)
             return goal_status
 
-        return (
-            GoalStatus.PENDING
-            if period_start > today
-            else GoalStatus.IN_PROGRESS
-            if period_start <= today <= period_end
-            else GoalStatus.FAILED
-        )
+        if period_start > today:
+            return GoalStatus.PENDING
+        if period_start <= today <= period_end:
+            return GoalStatus.IN_PROGRESS
+        return GoalStatus.FAILED
 
     def _validate_provided_status(
         self,

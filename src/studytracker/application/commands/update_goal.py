@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import date
 from typing import override
 from uuid import UUID
 
@@ -31,9 +30,9 @@ class UpdateGoalHandler(RequestHandler[UpdateGoalRequest, None]):
             raise GoalNotFoundError(goal_id=request.goal_id)
 
         if request.name is not None:
-            goal.name = request.name
+            goal.set_name(request.name)
 
         if request.description is not None:
-            goal.description = request.description
+            goal.set_description(request.description)
 
         await self._data_context.commit()
