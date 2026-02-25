@@ -3,14 +3,27 @@ import logging
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from studytracker.application.errors.goal import ParentGoalNotFoundError
+from studytracker.application.errors.goal import GoalNotFoundError, ParentGoalNotFoundError
 from studytracker.domain.errors.base import AppError
+from studytracker.domain.errors.goal import (
+    InvalidPeriodRangeError,
+    InvalidStatusForActiveGoalError,
+    InvalidStatusForCompletedGoalError,
+    InvalidStatusForNotStartedGoalError,
+    InvalidSubgoalPeriodRangeError,
+)
 from studytracker.infrastructure.http.errors import ErrorResponse, InternalServerError
 
 logger = logging.getLogger(__name__)
 
 error_to_http_status: dict[type[AppError], int] = {
     ParentGoalNotFoundError: 404,
+    GoalNotFoundError: 404,
+    InvalidPeriodRangeError: 422,
+    InvalidSubgoalPeriodRangeError: 422,
+    InvalidStatusForNotStartedGoalError: 422,
+    InvalidStatusForActiveGoalError: 422,
+    InvalidStatusForCompletedGoalError: 422,
 }
 
 
