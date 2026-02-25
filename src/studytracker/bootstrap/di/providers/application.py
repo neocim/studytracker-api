@@ -5,6 +5,7 @@ from dishka import Provider, Scope, WithParents, provide, provide_all
 from studytracker.application.commands.create_goal import CreateGoalHandler, CreateGoalRequest
 from studytracker.application.commands.create_subgoal import CreateSubgoalHandler, CreateSubgoalRequest
 from studytracker.application.commands.delete_goal import DeleteGoalHandler, DeleteGoalRequest
+from studytracker.application.commands.set_status import SetGoalStatusHandler, SetGoalStatusRequest
 from studytracker.application.commands.update_goal import UpdateGoalHandler, UpdateGoalRequest
 from studytracker.application.queries.get_goal import GetGoalHandler, GetGoalRequest
 
@@ -13,6 +14,7 @@ class ApplicationProvider(Provider):
     handlers = provide_all(
         CreateGoalHandler,
         CreateSubgoalHandler,
+        SetGoalStatusHandler,
         GetGoalHandler,
         DeleteGoalHandler,
         UpdateGoalHandler,
@@ -28,6 +30,7 @@ class ApplicationProvider(Provider):
 
         registry.add_request_handler(CreateGoalRequest, CreateGoalHandler)
         registry.add_request_handler(CreateSubgoalRequest, CreateSubgoalHandler)
+        registry.add_request_handler(SetGoalStatusRequest, SetGoalStatusHandler)
         registry.add_request_handler(GetGoalRequest, GetGoalHandler)
         registry.add_request_handler(UpdateGoalRequest, UpdateGoalHandler)
         registry.add_request_handler(DeleteGoalRequest, DeleteGoalHandler)
