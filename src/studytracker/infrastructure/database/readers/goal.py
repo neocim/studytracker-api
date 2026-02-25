@@ -25,7 +25,8 @@ class SQLAlchemyGoalReader(GoalReader):
     async def get_with_subgoals(self, goal_id: UUID, user_id: UUID) -> Goal | None:
         query = (
             select(Goal)
-            .where(GOALS_TABLE.c.id == goal_id and GOALS_TABLE.c.user_id == user_id)
+            .where(GOALS_TABLE.c.user_id == user_id)
+            .where(GOALS_TABLE.c.id == goal_id)
             .options(selectinload(Goal._subgoals))  # noqa: SLF001
         )
         result: Goal = (await self._session.execute(query)).scalar_one_or_none()
