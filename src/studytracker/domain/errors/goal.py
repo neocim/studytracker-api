@@ -30,7 +30,7 @@ class InvalidStatusForNotStartedGoalError(AppError):
     @override
     @property
     def message(self) -> str:
-        return "Only PENDING or cancelled statuses are allowed for not started goals"
+        return "Only pending or cancelled statuses are allowed for not started goals"
 
 
 @app_error
