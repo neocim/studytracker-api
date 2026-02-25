@@ -58,17 +58,6 @@ class Goal(Entity[UUID]):
     def set_description(self, new_description: str | None) -> None:
         self._description = new_description
 
-    def set_parent(self, parent_goal: "Goal") -> None:
-        ########################################
-        if parent_goal.entity_id == self.entity_id:
-            raise ValueError("A goal cannot be its own parent")
-
-        ####################################### UPDAAAAATEE THIS FUCN dfont forget
-        if self._parent is not None:
-            raise ValueError("Parent goal is already set. Changing parent is not allowed.")
-
-        self._parent = parent_goal
-
     def add_subgoal(self, subgoal: "Goal") -> None:
         if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
             raise InvalidSubgoalPeriodRangeError
