@@ -28,7 +28,7 @@ class SQLAlchemyGoalReader(GoalReader):
             .where(GOALS_TABLE.c.id == goal_id and GOALS_TABLE.c.user_id == user_id)
             .options(selectinload(Goal._subgoals))  # noqa: SLF001
         )
-        result: Goal = await self._session.execute(query)
+        result: Goal = (await self._session.execute(query)).scalar_one_or_none()
 
         return result
 
