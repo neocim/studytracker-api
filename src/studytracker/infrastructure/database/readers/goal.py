@@ -15,20 +15,26 @@ class SQLAlchemyGoalReader(GoalReader):
         self._session = session
 
     @override
-    async def get_by_id(self, goal_id: UUID) -> Goal | None:
-        return await self._session.get(Goal, goal_id)
+    async def get_by_id(self, goal_id: UUID, user_id: UUID) -> Goal | None:
+        query = select(Goal).where(GOALS_TABLE.c.id == goal_id and GOALS_TABLE.c.user_id == user_id)
+        result = await self._session.execute(query)
+
+        return result
 
     @override
-    async def get_with_subgoals(self, goal_id: UUID) -> Goal | None:
-        result = await self._session.execute(
-            select(Goal).where(Goal._entity_id == goal_id).options(selectinload(Goal._subgoals)),
+    async def get_with_subgoals(self, goal_id: UUID, user_id: UUID) -> Goal | None:
+        query = (
+            select(Goal)
+            .where(GOALS_TABLE.c.id == goal_id and GOALS_TABLE.c.user_id == user_id)
+            .options(selectinload(Goal._subgoals))  # noqa: SLF001
         )
+        result: Goal = await self._session.execute(query)
 
-        return result.scalar_one_or_none()
+        return result
 
     @override
     async def exists(self, goal_id: UUID) -> bool:
         query = select(exists().where(GOALS_TABLE.c.id == goal_id))
+        result: bool = (await self._session.execute(query)).scalar_one()
 
-        result = await self._session.execute(query)
-        return result.scalar_one()
+        return result

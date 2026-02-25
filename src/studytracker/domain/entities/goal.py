@@ -6,8 +6,8 @@ from uuid import UUID
 from studytracker.domain.entities.base import Entity
 from studytracker.domain.errors.goal import (
     InvalidPeriodRangeError,
+    InvalidStatusForActiveGoalError,
     InvalidStatusForCompletedGoalError,
-    InvalidStatusForInProgressGoalError,
     InvalidStatusForNotStartedGoalError,
     InvalidSubgoalPeriodRangeError,
 )
@@ -15,15 +15,15 @@ from studytracker.domain.errors.goal import (
 
 class GoalStatus(StrEnum):
     PENDING = "PENDING"
-    IN_PROGRESS = "IN_PROGRESS"
+    ACTIVE = "ACTIVE"
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     CANCELED = "CANCELED"
 
 
-VALID_STATUSES_FOR_COMPLETED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELED]
+VALID_STATUSES_FOR_SUCCEEDED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELED]
 VALID_STATUSES_FOR_NOT_STARTED_GOAL = [GoalStatus.PENDING, GoalStatus.CANCELED]
-VALID_STATUSES_FOR_IN_PROGRESS_GOAL = [GoalStatus.IN_PROGRESS, GoalStatus.CANCELED]
+VALID_STATUSES_FOR_ACTIVE_GOAL = [GoalStatus.ACTIVE, GoalStatus.CANCELED]
 
 
 class Goal(Entity[UUID]):
@@ -58,6 +58,25 @@ class Goal(Entity[UUID]):
     def set_description(self, new_description: str | None) -> None:
         self._description = new_description
 
+    def try_set_pending_status(self) -> None:
+        self._validate_not_started_status(self._period_start, self._get_today(), GoalStatus.PENDING)
+        self._goal_status = GoalStatus.PENDING
+
+    def try_set_active_status(self) -> None:
+        self._validate_active_status(self._period_start, self._period_end, self._get_today(), GoalStatus.ACTIVE)
+        self._goal_status = GoalStatus.ACTIVE
+
+    def try_set_succeeded_status(self) -> None:
+        self._validate_completed_status(self._period_end, self._get_today(), GoalStatus.SUCCEEDED)
+        self._goal_status = GoalStatus.SUCCEEDED
+
+    def try_set_failed_status(self) -> None:
+        self._validate_completed_status(self._period_end, self._get_today(), GoalStatus.FAILED)
+        self._goal_status = GoalStatus.FAILED
+
+    def set_cancelled_status(self) -> None:
+        self._goal_status = GoalStatus.CANCELED
+
     def add_subgoal(self, subgoal: "Goal") -> None:
         if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
             raise InvalidSubgoalPeriodRangeError
@@ -70,37 +89,55 @@ class Goal(Entity[UUID]):
         period_end: date,
         goal_status: GoalStatus | None = None,
     ) -> GoalStatus:
-        today = datetime.datetime.now(tz=datetime.UTC).date()
+        today = self._get_today()
 
         if goal_status is not None:
-            self._validate_provided_status(period_start, period_end, goal_status, today)
+            self._validate_not_started_status(period_start, goal_status, today)
+            self._validate_active_status(period_start, period_end, goal_status, today)
+            self._validate_completed_status(period_end, goal_status, today)
+
             return goal_status
 
         if period_start > today:
             return GoalStatus.PENDING
         if period_start <= today <= period_end:
-            return GoalStatus.IN_PROGRESS
+            return GoalStatus.ACTIVE
         return GoalStatus.FAILED
 
-    def _validate_provided_status(
+    def _validate_not_started_status(
+        self,
+        period_start: date,
+        today: date,
+        goal_status: GoalStatus,
+    ) -> None:
+        if period_start > today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
+            raise InvalidStatusForNotStartedGoalError
+
+    def _validate_active_status(
         self,
         period_start: date,
         period_end: date,
-        goal_status: GoalStatus,
         today: date,
+        goal_status: GoalStatus,
     ) -> None:
-        if today > period_end and goal_status not in VALID_STATUSES_FOR_COMPLETED_GOAL:
+        if period_start <= today <= period_end and goal_status not in VALID_STATUSES_FOR_ACTIVE_GOAL:
+            raise InvalidStatusForActiveGoalError
+
+    def _validate_completed_status(
+        self,
+        period_end: date,
+        today: date,
+        goal_status: GoalStatus,
+    ) -> None:
+        if today > period_end and goal_status not in VALID_STATUSES_FOR_SUCCEEDED_GOAL:
             raise InvalidStatusForCompletedGoalError
-
-        if period_start <= today <= period_end and goal_status not in VALID_STATUSES_FOR_IN_PROGRESS_GOAL:
-            raise InvalidStatusForInProgressGoalError
-
-        if period_start > today and goal_status not in VALID_STATUSES_FOR_NOT_STARTED_GOAL:
-            raise InvalidStatusForNotStartedGoalError
 
     def _validate_period_range(self, period_start: date, period_end: date) -> None:
         if period_start >= period_end:
             raise InvalidPeriodRangeError
+
+    def _get_today(self) -> date:
+        return datetime.datetime.now(tz=datetime.UTC).date()
 
     @property
     def user_id(self) -> UUID:

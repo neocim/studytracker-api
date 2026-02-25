@@ -80,8 +80,8 @@ async def update_goal(
 
 @router.post("/goals/{parent_id}/subgoals", status_code=status.HTTP_201_CREATED)
 async def create_subgoal(
-    parent_id: UUID,
     user_id: UUID,
+    parent_id: UUID,
     sender: FromDishka[Sender],
     user_request: CreateGoal,
 ) -> CreatedGoal:

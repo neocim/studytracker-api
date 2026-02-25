@@ -12,6 +12,7 @@ from studytracker.domain.readers.goal import GoalReader
 
 @dataclass(frozen=True)
 class DeleteGoalRequest(Request[None]):
+    user_id: UUID
     goal_id: UUID
 
 
@@ -22,7 +23,7 @@ class DeleteGoalHandler(RequestHandler[DeleteGoalRequest, None]):
 
     @override
     async def handle(self, request: DeleteGoalRequest) -> None:
-        goal = await self._goal_reader.get_by_id(request.goal_id)
+        goal = await self._goal_reader.get_by_id(request.goal_id, request.user_id)
         if goal is None:
             raise GoalNotFoundError(goal_id=request.goal_id)
 
