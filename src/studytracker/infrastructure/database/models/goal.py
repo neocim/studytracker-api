@@ -21,11 +21,11 @@ GOALS_TABLE = Table(
     Column(
         "goal_status",
         Enum(
-            "PENDING",
-            "ACTIVE",
-            "SUCCEEDED",
-            "FAILED",
-            "CANCELLED",
+            "pending",
+            "active",
+            "succeeded",
+            "failed",
+            "cancelled",
             name="goal_status_enum",
         ),
         nullable=False,

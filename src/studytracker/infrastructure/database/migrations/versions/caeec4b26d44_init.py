@@ -31,7 +31,7 @@ def upgrade() -> None:
         sa.Column("description", sa.String(), nullable=True),
         sa.Column(
             "goal_status",
-            sa.Enum("PENDING", "ACTIVE", "SUCCEEDED", "FAILED", "CANCELLED", name="goal_status_enum"),
+            sa.Enum("pending", "active", "succeeded", "failed", "cancelled", name="goal_status_enum"),
             nullable=False,
         ),
         sa.Column("period_start", sa.Date(), nullable=False),

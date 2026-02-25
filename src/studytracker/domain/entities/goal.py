@@ -14,11 +14,11 @@ from studytracker.domain.errors.goal import (
 
 
 class GoalStatus(StrEnum):
-    PENDING = "PENDING"
-    ACTIVE = "ACTIVE"
-    SUCCEEDED = "SUCCEEDED"
-    FAILED = "FAILED"
-    CANCELLED = "CANCELLED"
+    PENDING = "pending"
+    ACTIVE = "active"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
 
 
 VALID_STATUSES_FOR_SUCCEEDED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELLED]

@@ -30,7 +30,7 @@ class InvalidStatusForNotStartedGoalError(AppError):
     @override
     @property
     def message(self) -> str:
-        return "Only PENDING or CANCELLED statuses are allowed for not started goals"
+        return "Only PENDING or cancelled statuses are allowed for not started goals"
 
 
 @app_error
@@ -40,7 +40,7 @@ class InvalidStatusForActiveGoalError(AppError):
     @override
     @property
     def message(self) -> str:
-        return "Only IN_PROGRESS or CANCELLED statuses are allowed for active goals"
+        return "Only active or cancelled statuses are allowed for active goals"
 
 
 @app_error
@@ -50,4 +50,4 @@ class InvalidStatusForCompletedGoalError(AppError):
     @override
     @property
     def message(self) -> str:
-        return "Only SUCCEEDED, FAILED, or CANCELLED statuses are allowed for completed goals"
+        return "Only succeeded, failed, or cancelled statuses are allowed for completed goals"
