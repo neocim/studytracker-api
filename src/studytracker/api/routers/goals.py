@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["goals"], route_class=DishkaRoute, prefix="/users/{user_id}")
 
-# TODO: Enpoints to get list of user goals, subgoals
-
 
 @router.post("/goals", status_code=status.HTTP_201_CREATED)
 async def create_goal(
@@ -40,7 +38,7 @@ async def create_goal(
         goal_status=user_request.goal_status,
     )
     result = await sender.send(create_goal)
-    logger.info("Goal created: %s", result.goal_id)
+    logger.info("Goal created")
 
     return CreatedGoal(goal_id=result.goal_id)
 
@@ -79,16 +77,16 @@ async def update_goal(
         description=description,
     )
     await sender.send(update_goal)
-    logger.info("Goal %s updated", goal_id)
+    logger.info("Goal updated")
 
 
 @router.patch("/goals/{goal_id}/{status}", status_code=status.HTTP_204_NO_CONTENT)
 async def set_status(user_id: UUID, goal_id: UUID, status: GoalStatus, sender: FromDishka[Sender]) -> None:
-    logger.info("Request to set active status for goal")
+    logger.info("Request to set %s status for goal", status)
 
     set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=status)
     await sender.send(set_status)
-    logger.info("Active status has been set")
+    logger.info("%s status has been set", status)
 
 
 @router.post("/goals/{parent_id}/subgoals", status_code=status.HTTP_201_CREATED)
@@ -110,7 +108,7 @@ async def create_subgoal(
         description=user_request.description,
     )
     result = await sender.send(create_subgoal)
-    logger.info("Subgoal created: %s", result.goal_id)
+    logger.info("Subgoal created")
 
     return CreatedGoal(goal_id=result.goal_id)
 
