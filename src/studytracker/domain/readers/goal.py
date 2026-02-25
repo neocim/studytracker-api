@@ -11,5 +11,9 @@ class GoalReader(Protocol):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_with_subgoals(self, goal_id: UUID) -> Goal | None:
+        raise NotImplementedError
+
+    @abstractmethod
     async def exists(self, goal_id: UUID) -> bool:
         raise NotImplementedError

@@ -55,7 +55,6 @@ MAPPER_REGISTRY.map_imperatively(
             Goal,
             cascade="all, delete-orphan",
             uselist=True,
-            lazy="selectin",
         ),
     },
 )
