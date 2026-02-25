@@ -22,10 +22,10 @@ GOALS_TABLE = Table(
         "goal_status",
         Enum(
             "PENDING",
-            "IN_PROGRESS",
+            "ACTIVE",
             "SUCCEEDED",
             "FAILED",
-            "CANCELED",
+            "CANCELLED",
             name="goal_status_enum",
         ),
         nullable=False,

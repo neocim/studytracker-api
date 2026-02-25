@@ -1,21 +1,22 @@
 """Init
 
-Revision ID: 9d053915b0cf
+Revision ID: caeec4b26d44
 Revises:
-Create Date: 2026-02-25 11:00:14.281517
+Create Date: 2026-02-25 13:40:50.759769
 
 """
 
-from collections.abc import Sequence
+from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = "9d053915b0cf"
-down_revision: str | Sequence[str] | None = None
-branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = None
+revision: str = "caeec4b26d44"
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -30,7 +31,7 @@ def upgrade() -> None:
         sa.Column("description", sa.String(), nullable=True),
         sa.Column(
             "goal_status",
-            sa.Enum("PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED", "CANCELED", name="goal_status_enum"),
+            sa.Enum("PENDING", "ACTIVE", "SUCCEEDED", "FAILED", "CANCELLED", name="goal_status_enum"),
             nullable=False,
         ),
         sa.Column("period_start", sa.Date(), nullable=False),

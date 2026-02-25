@@ -16,8 +16,8 @@ class SQLAlchemyGoalReader(GoalReader):
 
     @override
     async def get_by_id(self, goal_id: UUID, user_id: UUID) -> Goal | None:
-        query = select(Goal).where(GOALS_TABLE.c.id == goal_id and GOALS_TABLE.c.user_id == user_id)
-        result = await self._session.execute(query)
+        query = select(Goal).where(GOALS_TABLE.c.user_id == user_id).where(GOALS_TABLE.c.id == goal_id)
+        result = (await self._session.execute(query)).scalar_one_or_none()
 
         return result
 

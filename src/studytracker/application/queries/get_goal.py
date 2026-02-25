@@ -22,7 +22,7 @@ class GetGoalHandler(RequestHandler[GetGoalRequest, GoalReadModel]):
 
     @override
     async def handle(self, request: GetGoalRequest) -> GoalReadModel:
-        goal = await self._goal_reader.get_by_id(request.goal_id, request.user_id)
+        goal = await self._goal_reader.get_by_id(goal_id=request.goal_id, user_id=request.user_id)
 
         if goal is None:
             raise GoalNotFoundError(goal_id=request.goal_id)

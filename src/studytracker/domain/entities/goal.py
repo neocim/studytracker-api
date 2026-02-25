@@ -18,12 +18,12 @@ class GoalStatus(StrEnum):
     ACTIVE = "ACTIVE"
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
-    CANCELED = "CANCELED"
+    CANCELLED = "CANCELLED"
 
 
-VALID_STATUSES_FOR_SUCCEEDED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELED]
-VALID_STATUSES_FOR_NOT_STARTED_GOAL = [GoalStatus.PENDING, GoalStatus.CANCELED]
-VALID_STATUSES_FOR_ACTIVE_GOAL = [GoalStatus.ACTIVE, GoalStatus.CANCELED]
+VALID_STATUSES_FOR_SUCCEEDED_GOAL = [GoalStatus.SUCCEEDED, GoalStatus.FAILED, GoalStatus.CANCELLED]
+VALID_STATUSES_FOR_NOT_STARTED_GOAL = [GoalStatus.PENDING, GoalStatus.CANCELLED]
+VALID_STATUSES_FOR_ACTIVE_GOAL = [GoalStatus.ACTIVE, GoalStatus.CANCELLED]
 
 
 class Goal(Entity[UUID]):
@@ -58,24 +58,10 @@ class Goal(Entity[UUID]):
     def set_description(self, new_description: str | None) -> None:
         self._description = new_description
 
-    def try_set_pending_status(self) -> None:
-        self._validate_not_started_status(self._period_start, self._get_today(), GoalStatus.PENDING)
-        self._goal_status = GoalStatus.PENDING
-
-    def try_set_active_status(self) -> None:
-        self._validate_active_status(self._period_start, self._period_end, self._get_today(), GoalStatus.ACTIVE)
-        self._goal_status = GoalStatus.ACTIVE
-
-    def try_set_succeeded_status(self) -> None:
-        self._validate_completed_status(self._period_end, self._get_today(), GoalStatus.SUCCEEDED)
-        self._goal_status = GoalStatus.SUCCEEDED
-
-    def try_set_failed_status(self) -> None:
-        self._validate_completed_status(self._period_end, self._get_today(), GoalStatus.FAILED)
-        self._goal_status = GoalStatus.FAILED
-
-    def set_cancelled_status(self) -> None:
-        self._goal_status = GoalStatus.CANCELED
+    def set_status(self, goal_status: GoalStatus) -> None:
+        today = self._get_today()
+        self._validate_status(self._period_start, self._period_end, goal_status, today)
+        self._goal_status = goal_status
 
     def add_subgoal(self, subgoal: "Goal") -> None:
         if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
@@ -92,10 +78,7 @@ class Goal(Entity[UUID]):
         today = self._get_today()
 
         if goal_status is not None:
-            self._validate_not_started_status(period_start, goal_status, today)
-            self._validate_active_status(period_start, period_end, goal_status, today)
-            self._validate_completed_status(period_end, goal_status, today)
-
+            self._validate_status(period_start, period_end, goal_status, today)
             return goal_status
 
         if period_start > today:
@@ -103,6 +86,17 @@ class Goal(Entity[UUID]):
         if period_start <= today <= period_end:
             return GoalStatus.ACTIVE
         return GoalStatus.FAILED
+
+    def _validate_status(
+        self,
+        period_start: date,
+        period_end: date,
+        today: date,
+        goal_status: GoalStatus,
+    ) -> None:
+        self._validate_not_started_status(period_start, goal_status, today)
+        self._validate_active_status(period_start, period_end, goal_status, today)
+        self._validate_completed_status(period_end, goal_status, today)
 
     def _validate_not_started_status(
         self,

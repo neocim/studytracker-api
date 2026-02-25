@@ -11,9 +11,10 @@ from studytracker.api.dto.responses.goal import CreatedGoal, Goal
 from studytracker.application.commands.create_goal import CreateGoalRequest
 from studytracker.application.commands.create_subgoal import CreateSubgoalRequest
 from studytracker.application.commands.delete_goal import DeleteGoalRequest
-from studytracker.application.commands.set_active_status import SetActiveGoalStatusRequest
+from studytracker.application.commands.set_status import SetGoalStatusRequest
 from studytracker.application.commands.update_goal import UpdateGoalRequest
 from studytracker.application.queries.get_goal import GetGoalRequest
+from studytracker.domain.entities.goal import GoalStatus
 
 logger = logging.getLogger(__name__)
 
@@ -85,9 +86,45 @@ async def update_goal(
 async def set_active_status(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> None:
     logger.info("Request to set active status for goal")
 
-    set_active_status = SetActiveGoalStatusRequest(user_id=user_id, goal_id=goal_id)
-    await sender.send(set_active_status)
+    set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=GoalStatus.ACTIVE)
+    await sender.send(set_status)
     logger.info("Active status has been set")
+
+
+@router.patch("/goals/{goal_id}/pending", status_code=status.HTTP_204_NO_CONTENT)
+async def set_pending_status(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> None:
+    logger.info("Request to set pending status for goal")
+
+    set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=GoalStatus.PENDING)
+    await sender.send(set_status)
+    logger.info("Pending status has been set")
+
+
+@router.patch("/goals/{goal_id}/succeeded", status_code=status.HTTP_204_NO_CONTENT)
+async def set_succeeded_status(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> None:
+    logger.info("Request to set succeeded status for goal")
+
+    set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=GoalStatus.SUCCEEDED)
+    await sender.send(set_status)
+    logger.info("Succeeded status has been set")
+
+
+@router.patch("/goals/{goal_id}/failed", status_code=status.HTTP_204_NO_CONTENT)
+async def set_failed_status(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> None:
+    logger.info("Request to set failed status for goal")
+
+    set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=GoalStatus.SUCCEEDED)
+    await sender.send(set_status)
+    logger.info("Failed status has been set")
+
+
+@router.patch("/goals/{goal_id}/cancelled", status_code=status.HTTP_204_NO_CONTENT)
+async def set_cancelled_status(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> None:
+    logger.info("Request to set cancelled status for goal")
+
+    set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=GoalStatus.CANCELLED)
+    await sender.send(set_status)
+    logger.info("Cancelled status has been set")
 
 
 @router.post("/goals/{parent_id}/subgoals", status_code=status.HTTP_201_CREATED)
