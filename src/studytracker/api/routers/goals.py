@@ -8,6 +8,7 @@ from fastapi import APIRouter, status
 
 from studytracker.api.dto.requests.goal import CreateGoal, UpdateGoal
 from studytracker.api.dto.responses.goal import CreatedGoal, Goal
+from studytracker.api.goal_mapper import APIGoalMapper
 from studytracker.application.commands.create_goal import CreateGoalRequest
 from studytracker.application.commands.create_subgoal import CreateSubgoalRequest
 from studytracker.application.commands.delete_goal import DeleteGoalRequest
@@ -49,6 +50,7 @@ async def create_subgoal(
     parent_id: UUID,
     user_request: CreateGoal,
     sender: FromDishka[Sender],
+    mapper: FromDishka[APIGoalMapper],
 ) -> CreatedGoal:
     logger.info("Request to create a subgoal")
 
@@ -64,41 +66,33 @@ async def create_subgoal(
     result = await sender.send(create_subgoal)
     logger.info("Subgoal created")
 
-    return CreatedGoal(goal_id=result.goal_id)
+    return mapper.to_created_response(result)
 
 
 @router.get("/goals/{goal_id}", status_code=status.HTTP_200_OK)
-async def get_goal(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
+async def get_goal(
+    user_id: UUID,
+    goal_id: UUID,
+    sender: FromDishka[Sender],
+    mapper: FromDishka[APIGoalMapper],
+) -> Goal:
     get_goal = GetGoalRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
 
-    return Goal(
-        user_id=result.user_id,
-        goal_id=result.goal_id,
-        name=result.name,
-        description=result.description,
-        period_start=result.period_start,
-        period_end=result.period_end,
-        parent_id=result.parent_id,
-        goal_status=result.goal_status,
-    )
+    return mapper.to_goal_response(result)
 
 
 @router.get("/goals/{goal_id}/subgoals", status_cdoe=status.HTTP_200_OK)
-async def get_with_subgoals(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
+async def get_with_subgoals(
+    user_id: UUID,
+    goal_id: UUID,
+    sender: FromDishka[Sender],
+    mapper: FromDishka[APIGoalMapper],
+) -> Goal:
     get_goal = GetGoalRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
 
-    return Goal(
-        user_id=result.user_id,
-        goal_id=result.goal_id,
-        name=result.name,
-        description=result.description,
-        period_start=result.period_start,
-        period_end=result.period_end,
-        parent_id=result.parent_id,
-        goal_status=result.goal_status,
-    )
+    return mapper.to_goal_with_subgoals_response(result)
 
 
 @router.patch("/goals/{goal_id}", status_code=status.HTTP_204_NO_CONTENT)
