@@ -43,8 +43,49 @@ async def create_goal(
     return CreatedGoal(goal_id=result.goal_id)
 
 
-@router.get("/goals/{goal_id}", status_code=status.HTTP_200_OK, name="get_goal")
+@router.post("/goals/{parent_id}/subgoals", status_code=status.HTTP_201_CREATED)
+async def create_subgoal(
+    user_id: UUID,
+    parent_id: UUID,
+    user_request: CreateGoal,
+    sender: FromDishka[Sender],
+) -> CreatedGoal:
+    logger.info("Request to create a subgoal")
+
+    create_subgoal = CreateSubgoalRequest(
+        user_id=user_id,
+        name=user_request.name,
+        parent_id=parent_id,
+        period_start=user_request.period_start,
+        period_end=user_request.period_end,
+        goal_status=user_request.goal_status,
+        description=user_request.description,
+    )
+    result = await sender.send(create_subgoal)
+    logger.info("Subgoal created")
+
+    return CreatedGoal(goal_id=result.goal_id)
+
+
+@router.get("/goals/{goal_id}", status_code=status.HTTP_200_OK)
 async def get_goal(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
+    get_goal = GetGoalRequest(goal_id=goal_id, user_id=user_id)
+    result = await sender.send(get_goal)
+
+    return Goal(
+        user_id=result.user_id,
+        goal_id=result.goal_id,
+        name=result.name,
+        description=result.description,
+        period_start=result.period_start,
+        period_end=result.period_end,
+        parent_id=result.parent_id,
+        goal_status=result.goal_status,
+    )
+
+
+@router.get("/goals/{goal_id}/subgoals", status_cdoe=status.HTTP_200_OK)
+async def get_with_subgoals(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> Goal:
     get_goal = GetGoalRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
 
@@ -86,30 +127,6 @@ async def set_status(user_id: UUID, goal_id: UUID, status: GoalStatus, sender: F
     set_status = SetGoalStatusRequest(user_id=user_id, goal_id=goal_id, status=status)
     await sender.send(set_status)
     logger.info("%s status has been set", status)
-
-
-@router.post("/goals/{parent_id}/subgoals", status_code=status.HTTP_201_CREATED)
-async def create_subgoal(
-    user_id: UUID,
-    parent_id: UUID,
-    user_request: CreateGoal,
-    sender: FromDishka[Sender],
-) -> CreatedGoal:
-    logger.info("Request to create a subgoal")
-
-    create_subgoal = CreateSubgoalRequest(
-        user_id=user_id,
-        name=user_request.name,
-        parent_id=parent_id,
-        period_start=user_request.period_start,
-        period_end=user_request.period_end,
-        goal_status=user_request.goal_status,
-        description=user_request.description,
-    )
-    result = await sender.send(create_subgoal)
-    logger.info("Subgoal created")
-
-    return CreatedGoal(goal_id=result.goal_id)
 
 
 @router.delete("/goals/{goal_id}", status_code=status.HTTP_204_NO_CONTENT)

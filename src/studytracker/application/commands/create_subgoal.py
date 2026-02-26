@@ -9,6 +9,7 @@ from bazario.asyncio import RequestHandler
 from studytracker.application.dto.goal import CreatedGoal
 from studytracker.application.errors.goal import ParentGoalNotFoundError
 from studytracker.application.ports.data_context import DataContext
+from studytracker.application.ports.goal_mapper import GoalMapper
 from studytracker.application.ports.id_generator import IDGenerator
 from studytracker.domain.entities.goal import Goal, GoalStatus
 from studytracker.domain.readers.goal import GoalReader
@@ -26,14 +27,21 @@ class CreateSubgoalRequest(Request[CreatedGoal]):
 
 
 class CreateSubgoalHandler(RequestHandler[CreateSubgoalRequest, CreatedGoal]):
-    def __init__(self, goal_reader: GoalReader, data_context: DataContext, id_generator: IDGenerator) -> None:
+    def __init__(
+        self,
+        goal_reader: GoalReader,
+        data_context: DataContext,
+        goal_mapper: GoalMapper,
+        id_generator: IDGenerator,
+    ) -> None:
         self._goal_reader = goal_reader
         self._data_context = data_context
+        self._mapper = goal_mapper
         self._id_generator = id_generator
 
     @override
     async def handle(self, request: CreateSubgoalRequest) -> CreatedGoal:
-        goal = await self._goal_reader.get_with_subgoals(goal_id=request.parent_id, user_id=request.user_id)
+        goal = await self._goal_reader.get_by_id(goal_id=request.parent_id, user_id=request.user_id)
         if goal is None:
             raise ParentGoalNotFoundError(goal_id=request.parent_id)
 
@@ -52,4 +60,4 @@ class CreateSubgoalHandler(RequestHandler[CreateSubgoalRequest, CreatedGoal]):
         goal.add_subgoal(new_subgoal)
         await self._data_context.commit()
 
-        return CreatedGoal(goal_id=subgoal_id)
+        return self._mapper.to_created(new_subgoal)

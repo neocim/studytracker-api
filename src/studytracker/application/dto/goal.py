@@ -20,3 +20,16 @@ class GoalReadModel:
     goal_status: GoalStatus
     parent_id: UUID | None
     description: str | None
+
+
+@dataclass(frozen=True)
+class GoalWithSubgoalsReadModel:
+    goal_id: UUID
+    user_id: UUID
+    name: str
+    period_start: date
+    period_end: date
+    goal_status: GoalStatus
+    subgoals: list["GoalWithSubgoalsReadModel"]
+    parent_id: UUID | None
+    description: str | None
