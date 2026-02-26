@@ -8,6 +8,7 @@ from studytracker.application.commands.delete_goal import DeleteGoalHandler, Del
 from studytracker.application.commands.set_status import SetGoalStatusHandler, SetGoalStatusRequest
 from studytracker.application.commands.update_goal import UpdateGoalHandler, UpdateGoalRequest
 from studytracker.application.queries.get_goal import GetGoalHandler, GetGoalRequest
+from studytracker.application.queries.get_with_subgoals import GetGoalWithSubgoalsHandler, GetGoalWithSubgoalsRequest
 
 
 class ApplicationProvider(Provider):
@@ -16,6 +17,7 @@ class ApplicationProvider(Provider):
         CreateSubgoalHandler,
         SetGoalStatusHandler,
         GetGoalHandler,
+        GetGoalWithSubgoalsHandler,
         DeleteGoalHandler,
         UpdateGoalHandler,
         scope=Scope.REQUEST,
@@ -32,6 +34,7 @@ class ApplicationProvider(Provider):
         registry.add_request_handler(CreateSubgoalRequest, CreateSubgoalHandler)
         registry.add_request_handler(SetGoalStatusRequest, SetGoalStatusHandler)
         registry.add_request_handler(GetGoalRequest, GetGoalHandler)
+        registry.add_request_handler(GetGoalWithSubgoalsRequest, GetGoalWithSubgoalsHandler)
         registry.add_request_handler(UpdateGoalRequest, UpdateGoalHandler)
         registry.add_request_handler(DeleteGoalRequest, DeleteGoalHandler)
 

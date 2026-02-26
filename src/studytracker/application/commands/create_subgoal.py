@@ -41,7 +41,7 @@ class CreateSubgoalHandler(RequestHandler[CreateSubgoalRequest, CreatedGoal]):
 
     @override
     async def handle(self, request: CreateSubgoalRequest) -> CreatedGoal:
-        goal = await self._goal_reader.get_by_id(goal_id=request.parent_id, user_id=request.user_id)
+        goal = await self._goal_reader.get_with_subgoals(goal_id=request.parent_id, user_id=request.user_id)
         if goal is None:
             raise ParentGoalNotFoundError(goal_id=request.parent_id)
 
