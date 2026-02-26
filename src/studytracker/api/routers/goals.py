@@ -6,7 +6,7 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, status
 
-from studytracker.api.dto.requests.goal import CreateGoal
+from studytracker.api.dto.requests.goal import CreateGoal, UpdateGoal
 from studytracker.api.dto.responses.goal import CreatedGoal, Goal
 from studytracker.application.commands.create_goal import CreateGoalRequest
 from studytracker.application.commands.create_subgoal import CreateSubgoalRequest
@@ -24,8 +24,8 @@ router = APIRouter(tags=["goals"], route_class=DishkaRoute, prefix="/users/{user
 @router.post("/goals", status_code=status.HTTP_201_CREATED)
 async def create_goal(
     user_id: UUID,
-    sender: FromDishka[Sender],
     user_request: CreateGoal,
+    sender: FromDishka[Sender],
 ) -> CreatedGoal:
     logger.info("Request to create a goal")
 
@@ -64,17 +64,16 @@ async def get_goal(user_id: UUID, goal_id: UUID, sender: FromDishka[Sender]) -> 
 async def update_goal(
     user_id: UUID,
     goal_id: UUID,
+    user_request: UpdateGoal,
     sender: FromDishka[Sender],
-    name: str | None = None,
-    description: str | None = None,
 ) -> None:
     logger.info("Request to update a goal")
 
     update_goal = UpdateGoalRequest(
         user_id=user_id,
         goal_id=goal_id,
-        name=name,
-        description=description,
+        name=user_request.name,
+        description=user_request.description,
     )
     await sender.send(update_goal)
     logger.info("Goal updated")
@@ -93,8 +92,8 @@ async def set_status(user_id: UUID, goal_id: UUID, status: GoalStatus, sender: F
 async def create_subgoal(
     user_id: UUID,
     parent_id: UUID,
-    sender: FromDishka[Sender],
     user_request: CreateGoal,
+    sender: FromDishka[Sender],
 ) -> CreatedGoal:
     logger.info("Request to create a subgoal")
 

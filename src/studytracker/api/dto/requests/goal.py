@@ -11,3 +11,8 @@ class CreateGoal(BaseModel):
     period_end: date
     goal_status: GoalStatus | None
     description: str | None
+
+
+class UpdateGoal(BaseModel):
+    name: str | None
+    description: str | None
