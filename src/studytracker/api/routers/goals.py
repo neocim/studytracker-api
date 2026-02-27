@@ -6,6 +6,7 @@ from bazario.asyncio import Sender
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, status
+from pydantic import BaseModel
 
 from studytracker.application.commands.create_goal import CreateGoalRequest
 from studytracker.application.commands.create_subgoal import CreateSubgoalRequest
@@ -22,29 +23,37 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["goals"], route_class=DishkaRoute, prefix="/users/{user_id}")
 
 
+class CreateGoalBody(BaseModel):
+    name: str
+    period_start: date
+    period_end: date
+    goal_status: GoalStatus | None
+    description: str | None
+
+
+class UpdateGoalBody(BaseModel):
+    name: str | None
+    description: str | None
+
+
 @router.post("/goals", status_code=status.HTTP_201_CREATED)
 async def create_goal(
     user_id: UUID,
-    name: str,
-    period_start: date,
-    period_end: date,
-    goal_status: GoalStatus | None,
-    description: str | None,
+    body: CreateGoalBody,
     sender: FromDishka[Sender],
 ) -> CreatedGoal:
     logger.info("Request to create a goal")
 
     create_goal = CreateGoalRequest(
         user_id=user_id,
-        name=name,
-        period_start=period_start,
-        period_end=period_end,
-        description=description,
-        goal_status=goal_status,
+        name=body.name,
+        period_start=body.period_start,
+        period_end=body.period_end,
+        description=body.description,
+        goal_status=body.goal_status,
     )
     result = await sender.send(create_goal)
     logger.info("Goal created")
-
     return result
 
 
@@ -52,27 +61,22 @@ async def create_goal(
 async def create_subgoal(
     user_id: UUID,
     parent_id: UUID,
-    name: str,
-    period_start: date,
-    period_end: date,
-    goal_status: GoalStatus | None,
-    description: str | None,
+    body: CreateGoalBody,
     sender: FromDishka[Sender],
 ) -> CreatedGoal:
     logger.info("Request to create a subgoal")
 
     create_subgoal = CreateSubgoalRequest(
         user_id=user_id,
-        name=name,
+        name=body.name,
         parent_id=parent_id,
-        period_start=period_start,
-        period_end=period_end,
-        goal_status=goal_status,
-        description=description,
+        period_start=body.period_start,
+        period_end=body.period_end,
+        goal_status=body.goal_status,
+        description=body.description,
     )
     result = await sender.send(create_subgoal)
     logger.info("Subgoal created")
-
     return result
 
 
@@ -84,7 +88,6 @@ async def get_goal(
 ) -> GoalReadModel:
     get_goal = GetGoalRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
-
     return result
 
 
@@ -96,7 +99,6 @@ async def get_with_subgoals(
 ) -> GoalWithSubgoalsReadModel:
     get_goal = GetGoalWithSubgoalsRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
-
     return result
 
 
@@ -104,8 +106,7 @@ async def get_with_subgoals(
 async def update_goal(
     user_id: UUID,
     goal_id: UUID,
-    name: str | None,
-    description: str | None,
+    body: UpdateGoalBody,
     sender: FromDishka[Sender],
 ) -> None:
     logger.info("Request to update a goal")
@@ -113,8 +114,8 @@ async def update_goal(
     update_goal = UpdateGoalRequest(
         user_id=user_id,
         goal_id=goal_id,
-        name=name,
-        description=description,
+        name=body.name,
+        description=body.description,
     )
     await sender.send(update_goal)
     logger.info("Goal updated")

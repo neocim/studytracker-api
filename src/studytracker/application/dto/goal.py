@@ -12,24 +12,24 @@ class CreatedGoal:
 
 @dataclass(frozen=True)
 class GoalReadModel:
-    goal_id: UUID
     user_id: UUID
+    goal_id: UUID
+    parent_id: UUID | None
     name: str
+    description: str | None
     period_start: date
     period_end: date
     goal_status: GoalStatus
-    parent_id: UUID | None
-    description: str | None
 
 
 @dataclass(frozen=True)
 class GoalWithSubgoalsReadModel:
-    goal_id: UUID
     user_id: UUID
+    goal_id: UUID
+    parent_id: UUID | None
     name: str
+    description: str | None
     period_start: date
     period_end: date
     goal_status: GoalStatus
     subgoals: list["GoalWithSubgoalsReadModel"]
-    parent_id: UUID | None
-    description: str | None

@@ -46,14 +46,10 @@ MAPPER_REGISTRY.map_imperatively(
         "_name": GOALS_TABLE.c.name,
         "_description": GOALS_TABLE.c.description,
         "_goal_status": GOALS_TABLE.c.goal_status,
-        "_parent": relationship(
-            "Goal",
-            remote_side=[GOALS_TABLE.c.id],
-            uselist=False,
-        ),
         "_subgoals": relationship(
             Goal,
             cascade="all, delete-orphan",
+            primaryjoin=lambda: GOALS_TABLE.c.id == GOALS_TABLE.c.parent_id,
             uselist=True,
         ),
     },
