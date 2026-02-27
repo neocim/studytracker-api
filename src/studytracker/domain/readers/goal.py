@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from collections.abc import Sequence
 from typing import Protocol
 from uuid import UUID
 
@@ -12,6 +13,10 @@ class GoalReader(Protocol):
 
     @abstractmethod
     async def get_with_subgoals(self, goal_id: UUID, user_id: UUID, depth: int) -> Goal | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_many(self, user_id: UUID) -> Sequence[Goal]:
         raise NotImplementedError
 
     @abstractmethod

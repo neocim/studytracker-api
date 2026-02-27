@@ -15,6 +15,7 @@ from studytracker.application.commands.set_status import SetGoalStatusRequest
 from studytracker.application.commands.update_goal import UpdateGoalRequest
 from studytracker.application.dto.goal import CreatedGoal, GoalReadModel, GoalWithSubgoalsReadModel
 from studytracker.application.queries.get_goal import GetGoalRequest
+from studytracker.application.queries.get_many_goals import GetManyGoalsRequest
 from studytracker.application.queries.get_with_subgoals import GetGoalWithSubgoalsRequest
 from studytracker.domain.entities.goal import GoalStatus
 
@@ -98,6 +99,16 @@ async def get_with_subgoals(
 ) -> GoalWithSubgoalsReadModel:
     get_goal = GetGoalWithSubgoalsRequest(goal_id=goal_id, user_id=user_id)
     result = await sender.send(get_goal)
+    return result
+
+
+@router.get("/goals", status_code=status.HTTP_200_OK)
+async def get_many_goals(
+    user_id: UUID,
+    sender: FromDishka[Sender],
+) -> list[GoalReadModel]:
+    get_goals = GetManyGoalsRequest(user_id=user_id)
+    result = await sender.send(get_goals)
     return result
 
 

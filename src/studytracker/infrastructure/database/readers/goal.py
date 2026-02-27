@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import override
 from uuid import UUID
 
@@ -30,6 +31,12 @@ class SQLAlchemyGoalReader(GoalReader):
         )
         result = await self._session.execute(query)
         return result.scalar_one_or_none()
+
+    @override
+    async def get_many(self, user_id: UUID) -> Sequence[Goal]:
+        query = select(Goal).where(GOALS_TABLE.c.user_id == user_id)
+        result = await self._session.execute(query)
+        return result.scalars().all()
 
     @override
     async def exists(self, goal_id: UUID) -> bool:
