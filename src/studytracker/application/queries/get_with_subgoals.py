@@ -24,6 +24,8 @@ class GetGoalWithSubgoalsHandler(RequestHandler[GetGoalWithSubgoalsRequest, Goal
 
     @override
     async def handle(self, request: GetGoalWithSubgoalsRequest) -> GoalWithSubgoalsReadModel:
+        # Using a high depth value to get all subgoals, as the endpoint is not paginated.
+        # This is bad, we should use pagination
         goal = await self._goal_reader.get_with_subgoals(goal_id=request.goal_id, user_id=request.user_id, depth=1000)
         if goal is None:
             raise GoalNotFoundError(goal_id=request.goal_id)
