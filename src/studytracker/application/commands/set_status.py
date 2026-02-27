@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import override
+from uuid import UUID
 
 from bazario import Request
 from bazario.asyncio import RequestHandler
-from sqlalchemy import UUID
 
 from studytracker.application.errors.goal import GoalNotFoundError
 from studytracker.application.ports.data_context import DataContext
