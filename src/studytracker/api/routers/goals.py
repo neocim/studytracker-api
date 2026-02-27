@@ -43,7 +43,6 @@ async def create_goal(
     sender: FromDishka[Sender],
 ) -> CreatedGoal:
     logger.info("Request to create a goal")
-
     create_goal = CreateGoalRequest(
         user_id=user_id,
         name=body.name,

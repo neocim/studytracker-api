@@ -24,7 +24,7 @@ class GetGoalWithSubgoalsHandler(RequestHandler[GetGoalWithSubgoalsRequest, Goal
 
     @override
     async def handle(self, request: GetGoalWithSubgoalsRequest) -> GoalWithSubgoalsReadModel:
-        goal = await self._goal_reader.get_with_subgoals(goal_id=request.goal_id, user_id=request.user_id)
+        goal = await self._goal_reader.get_with_subgoals(goal_id=request.goal_id, user_id=request.user_id, depth=1000)
         if goal is None:
             raise GoalNotFoundError(goal_id=request.goal_id)
 

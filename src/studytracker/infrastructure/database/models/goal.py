@@ -49,8 +49,7 @@ MAPPER_REGISTRY.map_imperatively(
         "_subgoals": relationship(
             Goal,
             cascade="all, delete-orphan",
-            primaryjoin=lambda: GOALS_TABLE.c.id == GOALS_TABLE.c.parent_id,
-            uselist=True,
+            primaryjoin=lambda: GOALS_TABLE.c.parent_id == GOALS_TABLE.c.id,
         ),
     },
 )
