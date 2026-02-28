@@ -7,7 +7,7 @@ from studytracker.infrastructure.database.models.base import MAPPER_REGISTRY
 GOALS_TABLE = Table(
     "goals",
     MAPPER_REGISTRY.metadata,
-    Column("id", UUID, primary_key=True, nullable=False),
+    Column("id", UUID, primary_key=True),
     Column(
         "parent_id",
         UUID,
