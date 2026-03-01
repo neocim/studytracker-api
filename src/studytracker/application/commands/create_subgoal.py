@@ -41,7 +41,9 @@ class CreateSubgoalHandler(RequestHandler[CreateSubgoalRequest, CreatedGoal]):
 
     @override
     async def handle(self, request: CreateSubgoalRequest) -> CreatedGoal:
-        goal = await self._goal_reader.get_with_subgoals(goal_id=request.parent_id, user_id=request.user_id)
+        # Using a high depth value to get all subgoals, as the endpoint is not paginated.
+        # This is bad practice
+        goal = await self._goal_reader.get_with_subgoals(goal_id=request.parent_id, user_id=request.user_id, depth=1000)
         if goal is None:
             raise ParentGoalNotFoundError(goal_id=request.parent_id)
 
@@ -50,6 +52,7 @@ class CreateSubgoalHandler(RequestHandler[CreateSubgoalRequest, CreatedGoal]):
         new_subgoal: Goal = Goal(
             entity_id=subgoal_id,
             user_id=request.user_id,
+            parent=goal,
             period_start=request.period_start,
             period_end=request.period_end,
             name=request.name,

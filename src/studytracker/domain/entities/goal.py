@@ -34,7 +34,7 @@ class Goal(Entity[UUID]):
         period_start: date,
         period_end: date,
         name: str,
-        parent_id: UUID | None = None,
+        parent: "Goal" | None = None,
         description: str | None = None,
         goal_status: GoalStatus | None = None,
     ) -> None:
@@ -43,13 +43,14 @@ class Goal(Entity[UUID]):
         self._validate_period_range(period_start, period_end)
         self._goal_status = self._validate_and_get_status(period_start, period_end, goal_status)
 
-        self._parent_id = parent_id
+        self._user_id = user_id
         self._period_start = period_start
         self._period_end = period_end
-        self._user_id = user_id
         self._name = name
         self._description = description
 
+        self._parent = parent
+        self._parent_id = parent.entity_id if parent is not None else None
         self._subgoals: list[Goal] = []
 
     def set_name(self, new_name: str) -> None:
@@ -66,11 +67,37 @@ class Goal(Entity[UUID]):
         self._validate_status(self._period_start, self._period_end, today, goal_status)
         self._goal_status = goal_status
 
-    def add_subgoal(self, subgoal: "Goal") -> None:
-        if subgoal.period_start < self._period_start or subgoal.period_end > self._period_end:
-            raise InvalidSubgoalPeriodRangeError
+    def set_periods(
+        self,
+        new_start: date | None,
+        new_end: date | None,
+    ) -> None:
+        if new_start is None and new_end is None:
+            return
+        period_start = new_start if new_start is not None else self._period_start
+        period_end = new_end if new_end is not None else self._period_end
 
+        self._validate_period_range(period_start, period_end)
+        if self._parent is not None:
+            self._validate_subgoal_periods(
+                parent=self._parent,
+                period_start=period_start,
+                period_end=period_end,
+            )
+        self._period_start = period_start
+        self._period_end = period_end
+
+    def add_subgoal(self, subgoal: "Goal") -> None:
+        self._validate_subgoal_periods(
+            parent=self,
+            period_start=subgoal.period_start,
+            period_end=subgoal.period_end,
+        )
         self._subgoals.append(subgoal)
+
+    def _validate_subgoal_periods(self, parent: "Goal", period_start: date, period_end: date) -> None:
+        if period_start < parent.period_start or period_end > parent.period_end:
+            raise InvalidSubgoalPeriodRangeError
 
     def _validate_and_get_status(
         self,

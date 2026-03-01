@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import date
 from typing import override
 from uuid import UUID
 
@@ -14,8 +15,10 @@ from studytracker.domain.readers.goal import GoalReader
 class UpdateGoalRequest(Request[None]):
     user_id: UUID
     goal_id: UUID
-    name: str | None = None
-    description: str | None = None
+    name: str | None
+    description: str | None
+    period_start: date | None
+    period_end: date | None
 
 
 class UpdateGoalHandler(RequestHandler[UpdateGoalRequest, None]):
@@ -33,5 +36,6 @@ class UpdateGoalHandler(RequestHandler[UpdateGoalRequest, None]):
             goal.set_name(request.name)
         if request.description is not None:
             goal.set_description(request.description)
+        goal.set_periods(request.period_start, request.period_end)
 
         await self._data_context.commit()

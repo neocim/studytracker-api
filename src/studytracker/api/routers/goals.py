@@ -35,6 +35,8 @@ class CreateGoalBody(BaseModel):
 class UpdateGoalBody(BaseModel):
     name: str | None
     description: str | None
+    period_start: date | None
+    period_end: date | None
 
 
 @router.post("/goals", status_code=status.HTTP_201_CREATED)
@@ -126,6 +128,8 @@ async def update_goal(
         goal_id=goal_id,
         name=body.name,
         description=body.description,
+        period_start=body.period_start,
+        period_end=body.period_end,
     )
     await sender.send(update_goal)
     logger.info("Goal updated")

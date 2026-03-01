@@ -17,7 +17,12 @@ class SQLAlchemyGoalReader(GoalReader):
 
     @override
     async def get_by_id(self, goal_id: UUID, user_id: UUID) -> Goal | None:
-        query = select(Goal).where(GOALS_TABLE.c.user_id == user_id).where(GOALS_TABLE.c.id == goal_id)
+        query = (
+            select(Goal)
+            .where(GOALS_TABLE.c.user_id == user_id)
+            .where(GOALS_TABLE.c.id == goal_id)
+            .options(selectinload(Goal._parent))  # noqa: SLF001
+        )
         result = await self._session.execute(query)
         return result.scalar_one_or_none()
 
@@ -27,7 +32,10 @@ class SQLAlchemyGoalReader(GoalReader):
             select(Goal)
             .where(GOALS_TABLE.c.user_id == user_id)
             .where(GOALS_TABLE.c.id == goal_id)
-            .options(selectinload(Goal._subgoals, recursion_depth=depth))  # noqa: SLF001
+            .options(
+                selectinload(Goal._subgoals, recursion_depth=depth),  # noqa: SLF001
+                selectinload(Goal._parent),  # noqa: SLF001
+            )
         )
         result = await self._session.execute(query)
         return result.scalar_one_or_none()
