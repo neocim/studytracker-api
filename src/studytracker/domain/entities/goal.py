@@ -87,6 +87,8 @@ class Goal(Entity[UUID]):
         self._period_start = period_start
         self._period_end = period_end
 
+        self._goal_status = self._validate_and_get_status(period_start, period_end)
+
     def add_subgoal(self, subgoal: "Goal") -> None:
         self._validate_subgoal_periods(
             parent=self,
