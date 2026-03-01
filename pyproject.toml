@@ -7,10 +7,9 @@ name = "studytracker"
 version = "0.1.0"
 description = "The rewritten version of https://github.com/neocim/StudyTrackerApi"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "adaptix>=3.0.0b11",
-    "alembic>=1.18.4",
     "bazario>=0.4.2",
     "dishka>=1.8.0",
     "fastapi>=0.128.8",
@@ -22,6 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 lint = ["mypy>=1.19.1", "ruff>=0.15.0"]
+migrations = ["alembic>=1.18.4"]
 dev = ['studytracker[lint]']
 
 [tool.mypy]
@@ -45,9 +45,7 @@ enable_error_code = [
     "deprecated",
 ]
 
-files = ["src/", "tests/"]
-# UPDATE
-exclude = ["src/studytracker/"]
+exclude = ["src/studytracker/infrastructure/database/migrations/**.py"]
 
 [tool.ruff]
 line-length = 120
@@ -96,4 +94,4 @@ ignore = [
 name = "neocim"
 
 [project.scripts]
-studytracker = "studytracker.bootstrap.main:main"
+studytracker-server = "studytracker.bootstrap.main:main"

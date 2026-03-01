@@ -1,6 +1,6 @@
 services:
   nginx:
-    container_name: studytracker.Nginx
+    container_name: studytracker.nginx
     image: "nginx:1.29.1"
     expose:
       - "80"
@@ -9,11 +9,43 @@ services:
     networks:
       - studytracker.postgres.Network
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
 
-  db:
+  api:
+    container_name: studytracker.api
+    build:
+      context: .
+    expose:
+      - "5000"
+    restart: "unless-stopped"
+    env_file:
+      - "./config/.env"
+    volumes:
+      - "./config/config.toml:/app/config.toml:ro"
+    command: studytracker-server
+    depends_on:
+      - migrations
+  
+  migrations:
+    container_name: studytracker.migrations
+    build:
+      context: .
+    env_file:
+      - "./config/.env"
+    volumes:
+      - "./config/config.toml:/app/config.toml:ro"
+    command: alembic upgrade head
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
     container_name: studytracker.postgres
     image: "postgres:17-alpine"
+    expose:
+      - "5432"
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
