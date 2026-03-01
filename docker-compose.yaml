@@ -7,7 +7,7 @@ services:
     ports:
       - "127.0.0.1:80:80"
     networks:
-      - studytracker.postgres.Network
+      - studytracker.postgres.network
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -15,6 +15,8 @@ services:
 
   api:
     container_name: studytracker.api
+    networks:
+      - studytracker.postgres.network
     build:
       context: .
     expose:
@@ -24,24 +26,25 @@ services:
       - "./config/.env"
     volumes:
       - "./config/config.toml:/app/config.toml:ro"
-    command: studytracker-server
-    depends_on:
-      - migrations
-  
+    command: studytracker
+
   migrations:
     container_name: studytracker.migrations
+    networks:
+      - studytracker.postgres.network
     build:
       context: .
     env_file:
       - "./config/.env"
     volumes:
       - "./config/config.toml:/app/config.toml:ro"
+      - "./alembic.ini:/app/alembic.ini:ro"
     command: alembic upgrade head
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
 
-  postgres:
+  db:
     container_name: studytracker.postgres
     image: "postgres:17-alpine"
     expose:
@@ -51,7 +54,7 @@ services:
     volumes:
       - studytracker.postgres.data:/var/lib/postgresql/data/:rw
     networks:
-      - studytracker.postgres.Network
+      - studytracker.postgres.network
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -71,4 +74,4 @@ volumes:
   studytracker.postgres.data: {}
 
 networks:
-  studytracker.postgres.Network: {}
+  studytracker.postgres.network: {}
